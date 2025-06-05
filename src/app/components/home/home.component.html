@@ -80,26 +80,23 @@
         <!-- Video Info -->
         <div class="video-info">
           <h3 class="video-title">{{ video.title }}</h3>
-          <p class="video-description" *ngIf="video.description">{{ video.description }}</p>
-          
-          <div class="video-meta">
+          <p class="video-description" *ngIf="video.description">{{ video.description }}</p>            <div class="video-meta">
             <span class="views">
-              <mat-icon>visibility</mat-icon>
-              {{ video.viewCount || 0 }} weergaven
+              <span class="icon">👁️</span>
+              {{ video.viewCount || 0 }}
             </span>
             <span class="likes">
-              <mat-icon>favorite</mat-icon>
+              <span class="icon">❤️</span>
               {{ video.likeCount || 0 }}
             </span>
             <span class="content-type" [class.premium]="video.contentType === 'PREMIUM'">
+              <span class="icon">{{ video.contentType === 'PREMIUM' ? '⭐' : '🆓' }}</span>
               {{ video.contentType === 'PREMIUM' ? 'Premium' : 'Gratis' }}
             </span>
-          </div>
-
-          <!-- Hashtags -->
+          </div><!-- Hashtags -->
           <div class="hashtags" *ngIf="video.hashtags">
             <span class="hashtag" *ngFor="let tag of video.hashtags.split(',').slice(0, 3)">
-              #{{ tag.trim() }}
+              {{ tag.trim() }}
             </span>
           </div>
         </div>
