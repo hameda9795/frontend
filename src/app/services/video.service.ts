@@ -90,14 +90,32 @@ export class VideoService {
   getPublicVideos(page: number = 0, size: number = 10): Observable<PageResponse<Video>> {
     return this.http.get<PageResponse<Video>>(`${this.apiUrl}/public?page=${page}&size=${size}`);
   }
-
   getAllVideos(page: number = 0, size: number = 10): Observable<PageResponse<Video>> {
     return this.http.get<PageResponse<Video>>(`${this.apiUrl}/all?page=${page}&size=${size}`, {
       headers: this.authService.getAuthHeaders()
-    });
-  }
+    });  }
+
+  // For general video fetching - uses /all if authenticated, /public if not
   getVideos(page: number = 0, size: number = 10): Observable<Video[]> {
-    return this.http.get<Video[]>(`${this.apiUrl}?page=${page}&size=${size}`);
+    if (this.authService.isAuthenticated()) {
+      // Use /all endpoint for authenticated users (returns PageResponse)
+      return new Observable(observer => {
+        this.getAllVideos(page, size).subscribe({
+          next: (pageResponse) => observer.next(pageResponse.content),
+          error: (error) => observer.error(error),
+          complete: () => observer.complete()
+        });
+      });
+    } else {
+      // Use /public endpoint for unauthenticated users (returns PageResponse)
+      return new Observable(observer => {
+        this.getPublicVideos(page, size).subscribe({
+          next: (pageResponse) => observer.next(pageResponse.content),
+          error: (error) => observer.error(error),
+          complete: () => observer.complete()
+        });
+      });
+    }
   }
 
   getVideo(id: number): Observable<Video> {

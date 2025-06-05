@@ -32,16 +32,38 @@
       Opnieuw proberen
     </button>
   </div>
-
   <!-- Videos Grid -->
-  <div *ngIf="!loading && !error" class="videos-grid">
-    <div *ngFor="let video of videos" class="video-card-container">
-      <mat-card class="video-card">
+  <div *ngIf="!loading && !error" class="videos-section">
+    <div class="videos-grid">
+      <div *ngFor="let video of videos" class="video-card" (click)="playVideo(video)">
+        <!-- Video Thumbnail with 9:16 Aspect Ratio -->
         <div class="video-thumbnail">
+          <!-- Video Player (Hidden by default) -->
+          <video 
+            #videoPlayer
+            *ngIf="playingVideoId === video.id && canWatchVideo(video)"
+            [src]="getVideoUrl(video.videoUrl)" 
+            class="video-player"
+            controls
+            autoplay
+            (click)="$event.stopPropagation()"
+            (ended)="stopVideo()">
+          </video>
+          
+          <!-- Cover Image -->
           <img 
+            *ngIf="playingVideoId !== video.id"
             [src]="getVideoThumbnail(video)" 
             [alt]="video.title"
-            class="thumbnail-image">
+            class="cover-image"
+            (error)="onImageError($event)">
+          
+          <!-- Play Button Overlay -->
+          <div *ngIf="playingVideoId !== video.id" class="play-overlay">
+            <div class="play-button">
+              <mat-icon>{{ canWatchVideo(video) ? 'play_arrow' : 'lock' }}</mat-icon>
+            </div>
+          </div>
           
           <!-- Premium Badge -->
           <div *ngIf="video.contentType === 'PREMIUM'" class="premium-badge">
@@ -49,65 +71,39 @@
             <span>Premium</span>
           </div>
           
-          <!-- Duration -->
-          <div class="duration-badge">
+          <!-- Duration Badge -->
+          <div *ngIf="video.duration" class="duration-badge">
             {{ formatDuration(video.duration) }}
-          </div>
-          
-          <!-- Play Overlay -->
-          <div class="play-overlay" *ngIf="canWatchVideo(video)">
-            <mat-icon class="play-icon">play_arrow</mat-icon>
-          </div>
-          
-          <!-- Premium Lock -->
-          <div class="lock-overlay" *ngIf="!canWatchVideo(video)">
-            <mat-icon class="lock-icon">lock</mat-icon>
-            <span>Premium Required</span>
           </div>
         </div>
 
-        <mat-card-content class="video-info">
+        <!-- Video Info -->
+        <div class="video-info">
           <h3 class="video-title">{{ video.title }}</h3>
-          <p class="video-description">{{ video.description }}</p>
+          <p class="video-description" *ngIf="video.description">{{ video.description }}</p>
           
           <div class="video-meta">
             <span class="views">
               <mat-icon>visibility</mat-icon>
-              {{ formatViews(video.viewCount) }} weergaven
+              {{ video.viewCount || 0 }} weergaven
             </span>
             <span class="likes">
               <mat-icon>favorite</mat-icon>
-              {{ video.likeCount }}
+              {{ video.likeCount || 0 }}
+            </span>
+            <span class="content-type" [class.premium]="video.contentType === 'PREMIUM'">
+              {{ video.contentType === 'PREMIUM' ? 'Premium' : 'Gratis' }}
             </span>
           </div>
 
-          <!-- Tags -->
-          <div class="video-tags" *ngIf="video.tags && video.tags.length > 0">
-            <mat-chip *ngFor="let tag of video.tags.split(',')" class="tag-chip">
-              {{ tag.trim() }}
-            </mat-chip>
+          <!-- Hashtags -->
+          <div class="hashtags" *ngIf="video.hashtags">
+            <span class="hashtag" *ngFor="let tag of video.hashtags.split(',').slice(0, 3)">
+              #{{ tag.trim() }}
+            </span>
           </div>
-        </mat-card-content>
-
-        <mat-card-actions class="video-actions">
-          <button 
-            mat-raised-button 
-            [color]="canWatchVideo(video) ? 'primary' : 'warn'"
-            [routerLink]="canWatchVideo(video) ? ['/video', video.id] : null"
-            [disabled]="!canWatchVideo(video)">
-            <mat-icon>{{ canWatchVideo(video) ? 'play_arrow' : 'lock' }}</mat-icon>
-            {{ canWatchVideo(video) ? 'Bekijken' : 'Premium Vereist' }}
-          </button>
-          
-          <button mat-icon-button aria-label="Favoriet toevoegen">
-            <mat-icon>favorite_border</mat-icon>
-          </button>
-          
-          <button mat-icon-button aria-label="Delen">
-            <mat-icon>share</mat-icon>
-          </button>
-        </mat-card-actions>
-      </mat-card>
+        </div>
+      </div>
     </div>
   </div>
 

@@ -27,6 +27,7 @@ export class HomeComponent implements OnInit {
   loading = true;
   error = '';
   selectedCategory = 'all';
+  playingVideoId: number | null = null;
   categories = [
     { value: 'all', label: 'Alle video\'s' },
     { value: 'free', label: 'Gratis' },
@@ -71,10 +72,50 @@ export class HomeComponent implements OnInit {
   canWatchVideo(video: any): boolean {
     if (video.contentType === 'FREE') return true;
     return this.authService.isAuthenticated() && this.authService.getCurrentUser()?.premium;
+  }  getVideoThumbnail(video: any): string {
+    if (video.coverImageUrl) {
+      return this.videoService.getCoverImageUrl(video.coverImageUrl);
+    }
+    return 'assets/images/default-thumbnail.svg';
   }
 
-  getVideoThumbnail(video: any): string {
-    return video.coverImageUrl || 'assets/images/default-thumbnail.jpg';
+  getVideoUrl(videoUrl: string): string {
+    return this.videoService.getVideoUrl(videoUrl);
+  }
+
+  playVideo(video: any): void {
+    if (!this.canWatchVideo(video)) {
+      // Handle premium content or navigate to login
+      return;
+    }
+    
+    if (this.playingVideoId === video.id) {
+      this.stopVideo();
+    } else {
+      this.stopVideo(); // Stop any currently playing video
+      this.playingVideoId = video.id;
+      
+      // Increment view count
+      this.videoService.incrementView(video.id).subscribe({
+        next: (updatedVideo) => {
+          // Update the video in the array with new view count
+          const index = this.videos.findIndex(v => v.id === video.id);
+          if (index !== -1) {
+            this.videos[index].viewCount = updatedVideo.viewCount;
+          }
+        },
+        error: (error) => {
+          console.error('Error incrementing view:', error);
+        }
+      });
+    }
+  }
+
+  stopVideo(): void {
+    this.playingVideoId = null;
+  }
+  onImageError(event: any): void {
+    event.target.src = 'assets/images/default-thumbnail.svg';
   }
 
   formatDuration(duration: number): string {

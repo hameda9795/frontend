@@ -56,9 +56,11 @@ export class AdminDashboardComponent implements OnInit {
         }
       });
     }
-  }
-  getVideoThumbnail(video: Video): string {
-    return video.coverImageUrl || 'assets/images/default-thumbnail.jpg';
+  }  getVideoThumbnail(video: Video): string {
+    if (video.coverImageUrl) {
+      return this.videoService.getCoverImageUrl(video.coverImageUrl);
+    }
+    return 'assets/images/default-thumbnail.svg';
   }
 
   getFreeVideosCount(): number {
