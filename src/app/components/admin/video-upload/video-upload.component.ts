@@ -63,8 +63,26 @@ export class VideoUploadComponent implements OnInit {
     if (input.files && input.files.length > 0) {
       this.selectedImageFile = input.files[0];
     }
-  }
-  onSubmit(): void {
+  }  onSubmit(): void {
+    // Debug authentication status
+    console.log('=== AUTHENTICATION DEBUG ===');
+    console.log('Is authenticated:', this.authService.isAuthenticated());
+    console.log('Is admin:', this.authService.isAdmin());
+    console.log('Current user:', this.authService.getCurrentUser());
+    console.log('Token:', this.authService.getToken());
+    console.log('Auth headers:', this.authService.getAuthHeaders());
+
+    if (!this.authService.isAuthenticated()) {
+      this.errorMessage = 'Je bent niet ingelogd. Log eerst in.';
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    if (!this.authService.isAdmin()) {
+      this.errorMessage = 'Je hebt geen admin rechten om videos te uploaden.';
+      return;
+    }
+
     if (this.uploadForm.valid && this.selectedVideoFile) {
       this.isLoading = true;
       this.errorMessage = '';
@@ -80,9 +98,18 @@ export class VideoUploadComponent implements OnInit {
           }, 2000);
         },
         error: (error) => {
-          this.errorMessage = 'Fout bij het uploaden van de video. Probeer het opnieuw.';
+          console.error('Upload error details:', error);
+          
+          if (error.status === 403) {
+            this.errorMessage = 'Toegang geweigerd. Controleer of je ingelogd bent als admin en probeer opnieuw in te loggen.';
+          } else if (error.status === 401) {
+            this.errorMessage = 'Je sessie is verlopen. Log opnieuw in.';
+            this.router.navigate(['/login']);
+          } else {
+            this.errorMessage = `Fout bij het uploaden: ${error.status} - ${error.statusText}`;
+          }
+          
           this.isLoading = false;
-          console.error('Upload error:', error);
         },
         complete: () => {
           this.isLoading = false;
