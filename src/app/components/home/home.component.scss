@@ -249,25 +249,20 @@
   max-width: 100%;
   margin: 0 auto;
   
-  // 2 columns on tablets
-  @media (min-width: 576px) {
+  // 2 columns on small tablets
+  @media (min-width: 480px) {
     grid-template-columns: repeat(2, 1fr);
     max-width: none;
   }
   
-  // 3 columns on small desktop
+  // 3 columns on tablets
   @media (min-width: 768px) {
     grid-template-columns: repeat(3, 1fr);
   }
   
-  // 4 columns on medium desktop
+  // 4 columns on desktop and larger screens (main requirement)
   @media (min-width: 1024px) {
     grid-template-columns: repeat(4, 1fr);
-  }
-  
-  // 5 columns on large desktop
-  @media (min-width: 1280px) {
-    grid-template-columns: repeat(5, 1fr);
   }
 }
 
