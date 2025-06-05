@@ -1,0 +1,87 @@
+<div class="admin-dashboard">
+  <div class="dashboard-header">
+    <h1>🛠️ Beheerderspaneel</h1>
+    <div class="header-actions">
+      <a routerLink="/admin/upload" class="btn btn-primary">
+        ➕ Nieuwe Video Uploaden
+      </a>
+      <a routerLink="/profile" class="btn btn-secondary">
+        👤 Terug naar Profiel
+      </a>
+    </div>
+  </div>
+
+  <div class="dashboard-stats">
+    <div class="stat-card">
+      <div class="stat-number">{{ videos.length }}</div>
+      <div class="stat-label">Totaal Video's</div>
+    </div>    <div class="stat-card">
+      <div class="stat-number">{{ getFreeVideosCount() }}</div>
+      <div class="stat-label">Gratis Video's</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">{{ getPremiumVideosCount() }}</div>
+      <div class="stat-label">Premium Video's</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">{{ getTotalViews() }}</div>
+      <div class="stat-label">Totaal Weergaven</div>
+    </div>
+  </div>
+
+  <div class="videos-section">
+    <h2>Video Beheer</h2>
+    
+    <div class="loading" *ngIf="loading">
+      <div class="spinner"></div>
+      <p>Video's laden...</p>
+    </div>
+
+    <div class="error" *ngIf="error && !loading">
+      <p>{{ error }}</p>
+      <button class="btn btn-primary" (click)="loadVideos()">Opnieuw proberen</button>
+    </div>
+
+    <div class="videos-grid" *ngIf="!loading && !error">
+      <div class="video-card" *ngFor="let video of videos">
+        <div class="video-thumbnail">
+          <img [src]="getVideoThumbnail(video)" [alt]="video.title" />
+          <div class="content-type-badge" [class.premium]="video.contentType === 'PREMIUM'">
+            {{ video.contentType === 'FREE' ? 'Gratis' : 'Premium' }}
+          </div>
+        </div>
+        
+        <div class="video-info">
+          <h3 class="video-title">{{ video.title }}</h3>
+          <p class="video-description">{{ video.description || 'Geen beschrijving' }}</p>
+          
+          <div class="video-stats">
+            <span class="stat">👁️ {{ video.viewCount }}</span>
+            <span class="stat">❤️ {{ video.likeCount }}</span>
+          </div>
+          
+          <div class="video-meta">
+            <small>Aangemaakt: {{ video.createdAt | date:'short' }}</small>
+          </div>
+        </div>
+        
+        <div class="video-actions">
+          <a [routerLink]="['/video', video.id]" class="btn btn-sm btn-view">
+            👁️ Bekijken
+          </a>
+          <button class="btn btn-sm btn-delete" (click)="deleteVideo(video.id)">
+            🗑️ Verwijderen
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="empty-state" *ngIf="!loading && !error && videos.length === 0">
+      <h3>Geen video's gevonden</h3>
+      <p>Upload je eerste video om te beginnen!</p>
+      <a routerLink="/admin/upload" class="btn btn-primary">
+        ➕ Video Uploaden
+      </a>
+    </div>
+  </div>
+</div>

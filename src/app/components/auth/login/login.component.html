@@ -1,0 +1,52 @@
+<div class="login-container">
+  <div class="login-card">    <div class="login-header">
+      <h2>Inloggen</h2>
+      <p>Welkom terug bij Bitzomax</p>
+    </div>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">      <div class="form-group">
+        <label for="username">Gebruikersnaam</label>
+        <input
+          type="text"
+          id="username"
+          formControlName="username"
+          class="form-control"
+          [class.is-invalid]="username?.invalid && username?.touched"
+          placeholder="Voer je gebruikersnaam in"
+        />
+        <div class="invalid-feedback" *ngIf="username?.invalid && username?.touched">
+          <div *ngIf="username?.errors?.['required']">Gebruikersnaam is verplicht</div>
+        </div>
+      </div>      <div class="form-group">
+        <label for="password">Wachtwoord</label>
+        <input
+          type="password"
+          id="password"
+          formControlName="password"
+          class="form-control"
+          [class.is-invalid]="password?.invalid && password?.touched"
+          placeholder="Voer je wachtwoord in"
+        />
+        <div class="invalid-feedback" *ngIf="password?.invalid && password?.touched">
+          <div *ngIf="password?.errors?.['required']">Wachtwoord is verplicht</div>
+          <div *ngIf="password?.errors?.['minlength']">Wachtwoord moet minimaal 6 tekens bevatten</div>
+        </div>
+      </div>
+
+      <div class="error-message" *ngIf="errorMessage">
+        {{ errorMessage }}
+      </div>      <button
+        type="submit"
+        class="btn btn-primary w-100"
+        [disabled]="loginForm.invalid || isLoading"
+      >
+        <span *ngIf="isLoading" class="spinner"></span>
+        {{ isLoading ? 'Inloggen...' : 'Inloggen' }}
+      </button>
+    </form>
+
+    <div class="form-footer">
+      <p>Heb je geen account? <a routerLink="/register">Registreren</a></p>
+    </div>
+  </div>
+</div>

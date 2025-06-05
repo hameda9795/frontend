@@ -1,0 +1,148 @@
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { AuthService } from './auth.service';
+
+export interface Video {
+  id: number;
+  title: string;
+  description: string;
+  poemText: string;
+  videoUrl: string;
+  coverImageUrl: string;
+  hashtags: string;
+  contentType: 'FREE' | 'PREMIUM';
+  seoTitle: string;
+  seoDescription: string;
+  seoKeywords: string;
+  spotifyLink: string;
+  amazonLink: string;
+  appleMusicLink: string;
+  itunesLink: string;
+  youtubeMusicLink: string;
+  instagramLink: string;
+  viewCount: number;
+  likeCount: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface VideoRequest {
+  title: string;
+  description?: string;
+  poemText?: string;
+  hashtags?: string;
+  contentType: 'FREE' | 'PREMIUM';
+  seoTitle?: string;
+  seoDescription?: string;
+  seoKeywords?: string;
+  spotifyLink?: string;
+  amazonLink?: string;
+  appleMusicLink?: string;
+  itunesLink?: string;
+  youtubeMusicLink?: string;
+  instagramLink?: string;
+}
+
+export interface PageResponse<T> {
+  content: T[];
+  pageable: any;
+  totalElements: number;
+  totalPages: number;
+  last: boolean;
+  size: number;
+  number: number;
+  first: boolean;
+  numberOfElements: number;
+}
+
+@Injectable({
+  providedIn: 'root'
+})
+export class VideoService {
+  private apiUrl = 'http://localhost:8080/api/videos';
+
+  constructor(
+    private http: HttpClient,
+    private authService: AuthService
+  ) {}
+
+  uploadVideo(videoData: VideoRequest, videoFile: File, coverImage?: File): Observable<Video> {
+    const formData = new FormData();
+    
+    Object.keys(videoData).forEach(key => {
+      const value = (videoData as any)[key];
+      if (value !== null && value !== undefined) {
+        formData.append(key, value);
+      }
+    });
+    
+    formData.append('videoFile', videoFile);
+    if (coverImage) {
+      formData.append('coverImage', coverImage);
+    }
+
+    return this.http.post<Video>(`${this.apiUrl}/upload`, formData, {
+      headers: this.authService.getAuthHeaders()
+    });
+  }
+
+  getPublicVideos(page: number = 0, size: number = 10): Observable<PageResponse<Video>> {
+    return this.http.get<PageResponse<Video>>(`${this.apiUrl}/public?page=${page}&size=${size}`);
+  }
+
+  getAllVideos(page: number = 0, size: number = 10): Observable<PageResponse<Video>> {
+    return this.http.get<PageResponse<Video>>(`${this.apiUrl}/all?page=${page}&size=${size}`, {
+      headers: this.authService.getAuthHeaders()
+    });
+  }
+  getVideos(page: number = 0, size: number = 10): Observable<Video[]> {
+    return this.http.get<Video[]>(`${this.apiUrl}?page=${page}&size=${size}`);
+  }
+
+  getVideo(id: number): Observable<Video> {
+    return this.http.get<Video>(`${this.apiUrl}/${id}`);
+  }
+
+  searchVideos(keyword: string, page: number = 0, size: number = 10): Observable<PageResponse<Video>> {
+    return this.http.get<PageResponse<Video>>(`${this.apiUrl}/search?keyword=${keyword}&page=${page}&size=${size}`);
+  }
+
+  getTrendingVideos(): Observable<Video[]> {
+    return this.http.get<Video[]>(`${this.apiUrl}/trending`);
+  }
+
+  getPopularVideos(): Observable<Video[]> {
+    return this.http.get<Video[]>(`${this.apiUrl}/popular`);
+  }
+
+  incrementView(id: number): Observable<Video> {
+    return this.http.post<Video>(`${this.apiUrl}/${id}/view`, {});
+  }
+
+  toggleLike(id: number): Observable<Video> {
+    return this.http.post<Video>(`${this.apiUrl}/${id}/like`, {}, {
+      headers: this.authService.getAuthHeaders()
+    });
+  }
+
+  toggleFavorite(id: number): Observable<Video> {
+    return this.http.post<Video>(`${this.apiUrl}/${id}/favorite`, {}, {
+      headers: this.authService.getAuthHeaders()
+    });
+  }
+
+  deleteVideo(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${id}`, {
+      headers: this.authService.getAuthHeaders()
+    });
+  }
+
+  getVideoUrl(videoPath: string): string {
+    return `http://localhost:8080/uploads/${videoPath}`;
+  }
+
+  getCoverImageUrl(imagePath: string): string {
+    return `http://localhost:8080/uploads/${imagePath}`;
+  }
+}

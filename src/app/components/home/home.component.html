@@ -1,0 +1,120 @@
+<div class="home-container">
+  <!-- Header Section -->
+  <div class="header-section">
+    <h1>Welkom bij Bitzomax</h1>
+    <p class="subtitle">Ontdek de beste Nederlandse video content</p>
+    
+    <!-- Category Filter -->
+    <div class="category-filter">
+      <mat-chip-listbox aria-label="Video categorieën">
+        <mat-chip-option 
+          *ngFor="let category of categories"
+          [value]="category.value"
+          [selected]="selectedCategory === category.value"
+          (click)="onCategoryChange(category.value)">
+          {{ category.label }}
+        </mat-chip-option>
+      </mat-chip-listbox>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Video's laden...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error" class="error-container">
+    <mat-icon>error</mat-icon>
+    <p>{{ error }}</p>
+    <button mat-raised-button color="primary" (click)="loadVideos()">
+      Opnieuw proberen
+    </button>
+  </div>
+
+  <!-- Videos Grid -->
+  <div *ngIf="!loading && !error" class="videos-grid">
+    <div *ngFor="let video of videos" class="video-card-container">
+      <mat-card class="video-card">
+        <div class="video-thumbnail">
+          <img 
+            [src]="getVideoThumbnail(video)" 
+            [alt]="video.title"
+            class="thumbnail-image">
+          
+          <!-- Premium Badge -->
+          <div *ngIf="video.contentType === 'PREMIUM'" class="premium-badge">
+            <mat-icon>star</mat-icon>
+            <span>Premium</span>
+          </div>
+          
+          <!-- Duration -->
+          <div class="duration-badge">
+            {{ formatDuration(video.duration) }}
+          </div>
+          
+          <!-- Play Overlay -->
+          <div class="play-overlay" *ngIf="canWatchVideo(video)">
+            <mat-icon class="play-icon">play_arrow</mat-icon>
+          </div>
+          
+          <!-- Premium Lock -->
+          <div class="lock-overlay" *ngIf="!canWatchVideo(video)">
+            <mat-icon class="lock-icon">lock</mat-icon>
+            <span>Premium Required</span>
+          </div>
+        </div>
+
+        <mat-card-content class="video-info">
+          <h3 class="video-title">{{ video.title }}</h3>
+          <p class="video-description">{{ video.description }}</p>
+          
+          <div class="video-meta">
+            <span class="views">
+              <mat-icon>visibility</mat-icon>
+              {{ formatViews(video.viewCount) }} weergaven
+            </span>
+            <span class="likes">
+              <mat-icon>favorite</mat-icon>
+              {{ video.likeCount }}
+            </span>
+          </div>
+
+          <!-- Tags -->
+          <div class="video-tags" *ngIf="video.tags && video.tags.length > 0">
+            <mat-chip *ngFor="let tag of video.tags.split(',')" class="tag-chip">
+              {{ tag.trim() }}
+            </mat-chip>
+          </div>
+        </mat-card-content>
+
+        <mat-card-actions class="video-actions">
+          <button 
+            mat-raised-button 
+            [color]="canWatchVideo(video) ? 'primary' : 'warn'"
+            [routerLink]="canWatchVideo(video) ? ['/video', video.id] : null"
+            [disabled]="!canWatchVideo(video)">
+            <mat-icon>{{ canWatchVideo(video) ? 'play_arrow' : 'lock' }}</mat-icon>
+            {{ canWatchVideo(video) ? 'Bekijken' : 'Premium Vereist' }}
+          </button>
+          
+          <button mat-icon-button aria-label="Favoriet toevoegen">
+            <mat-icon>favorite_border</mat-icon>
+          </button>
+          
+          <button mat-icon-button aria-label="Delen">
+            <mat-icon>share</mat-icon>
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!loading && !error && videos.length === 0" class="empty-state">
+    <mat-icon class="empty-icon">video_library</mat-icon>
+    <h2>Geen video's gevonden</h2>
+    <p>Er zijn momenteel geen video's beschikbaar in deze categorie.</p>
+  </div>
+</div>

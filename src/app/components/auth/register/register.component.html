@@ -1,0 +1,87 @@
+<div class="register-container">
+  <div class="register-card">    <div class="register-header">
+      <h2>Registreren</h2>
+      <p>Maak een nieuw account aan bij Bitzomax</p>
+    </div>
+
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="register-form">      <div class="form-group">
+        <label for="username">Gebruikersnaam</label>
+        <div class="form-icon"></div>
+        <input
+          type="text"
+          id="username"
+          formControlName="username"
+          class="form-control"
+          [class.is-invalid]="username?.invalid && username?.touched"
+          placeholder="Kies je gebruikersnaam"
+        />
+        <div class="invalid-feedback" *ngIf="username?.invalid && username?.touched">
+          <div *ngIf="username?.errors?.['required']">Gebruikersnaam is verplicht</div>
+          <div *ngIf="username?.errors?.['minlength']">Gebruikersnaam moet minimaal 3 tekens bevatten</div>
+        </div>
+      </div>      <div class="form-group">
+        <label for="email">E-mailadres</label>
+        <div class="form-icon"></div>
+        <input
+          type="email"
+          id="email"
+          formControlName="email"
+          class="form-control"
+          [class.is-invalid]="email?.invalid && email?.touched"
+          placeholder="Voer je e-mailadres in"
+        />
+        <div class="invalid-feedback" *ngIf="email?.invalid && email?.touched">
+          <div *ngIf="email?.errors?.['required']">E-mailadres is verplicht</div>
+          <div *ngIf="email?.errors?.['email']">Voer een geldig e-mailadres in</div>
+        </div>
+      </div>      <div class="form-group">
+        <label for="password">Wachtwoord</label>
+        <div class="form-icon"></div>
+        <input
+          type="password"
+          id="password"
+          formControlName="password"
+          class="form-control"
+          [class.is-invalid]="password?.invalid && password?.touched"
+          placeholder="Kies je wachtwoord"
+        />
+        <div class="invalid-feedback" *ngIf="password?.invalid && password?.touched">
+          <div *ngIf="password?.errors?.['required']">Wachtwoord is verplicht</div>
+          <div *ngIf="password?.errors?.['minlength']">Wachtwoord moet minimaal 6 tekens bevatten</div>
+        </div>
+      </div>      <div class="form-group">
+        <label for="confirmPassword">Bevestig wachtwoord</label>
+        <div class="form-icon"></div>
+        <input
+          type="password"
+          id="confirmPassword"
+          formControlName="confirmPassword"
+          class="form-control"
+          [class.is-invalid]="(confirmPassword?.invalid && confirmPassword?.touched) || (registerForm.errors?.['mismatch'] && confirmPassword?.touched)"
+          placeholder="Bevestig je wachtwoord"
+        />
+        <div class="invalid-feedback" *ngIf="(confirmPassword?.invalid && confirmPassword?.touched) || (registerForm.errors?.['mismatch'] && confirmPassword?.touched)">
+          <div *ngIf="confirmPassword?.errors?.['required']">Wachtwoord bevestiging is verplicht</div>
+          <div *ngIf="registerForm.errors?.['mismatch']">Wachtwoorden komen niet overeen</div>
+        </div>
+      </div>
+
+      <div class="success-message" *ngIf="successMessage">
+        {{ successMessage }}
+      </div>
+
+      <div class="error-message" *ngIf="errorMessage">
+        {{ errorMessage }}
+      </div>      <button
+        type="submit"
+        class="btn btn-primary w-100"
+        [disabled]="registerForm.invalid || isLoading"
+      >
+        <span *ngIf="isLoading" class="spinner"></span>
+        {{ isLoading ? 'Registreren...' : 'Registreren' }}
+      </button>
+    </form>    <div class="form-footer">
+      <p>Heb je al een account? <a routerLink="/login">Inloggen</a></p>
+    </div>
+  </div>
+</div>

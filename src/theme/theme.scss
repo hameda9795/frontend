@@ -1,0 +1,180 @@
+// Bitzomax Theme Configuration
+
+// Theme Mixins
+@mixin glass-effect {
+  background: rgba(30, 41, 59, 0.8);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+@mixin gradient-text($gradient: var(--gradient-primary)) {
+  background: $gradient;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+@mixin hover-lift($translate: -4px) {
+  transition: all var(--transition-normal);
+  
+  &:hover {
+    transform: translateY($translate);
+    box-shadow: var(--shadow-lg);
+  }
+}
+
+@mixin loading-skeleton {
+  background: linear-gradient(90deg, var(--bg-secondary) 25%, var(--bg-tertiary) 50%, var(--bg-secondary) 75%);
+  background-size: 200% 100%;
+  animation: loading-shimmer 1.5s infinite;
+}
+
+// Component Mixins
+@mixin card-style {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+  transition: all var(--transition-normal);
+  
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-xl);
+    border-color: var(--border-light);
+  }
+}
+
+@mixin form-field-style {
+  .mat-mdc-text-field-wrapper {
+    background-color: var(--bg-secondary) !important;
+  }
+  
+  .mat-mdc-form-field-outline {
+    color: var(--border-color) !important;
+  }
+  
+  .mat-mdc-form-field-outline-thick {
+    color: var(--primary-color) !important;
+  }
+  
+  .mat-mdc-form-field-label {
+    color: var(--text-secondary) !important;
+  }
+  
+  .mat-mdc-input-element {
+    color: var(--text-primary) !important;
+    
+    &::placeholder {
+      color: var(--text-muted) !important;
+    }
+  }
+  
+  mat-icon {
+    color: var(--text-muted) !important;
+  }
+  
+  &.mat-focused {
+    mat-icon {
+      color: var(--primary-color) !important;
+    }
+  }
+}
+
+@mixin button-style($bg: var(--gradient-primary), $color: white) {
+  background: $bg !important;
+  color: $color !important;
+  border: none !important;
+  border-radius: var(--radius-lg) !important;
+  padding: var(--space-md) var(--space-lg) !important;
+  font-weight: 600 !important;
+  box-shadow: var(--shadow-md) !important;
+  transition: all var(--transition-normal) !important;
+  
+  &:hover:not(:disabled) {
+    transform: translateY(-2px) !important;
+    box-shadow: var(--shadow-lg) !important;
+  }
+  
+  &:disabled {
+    opacity: 0.6 !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+  }
+}
+
+// Animations
+@keyframes loading-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(99, 102, 241, 0.5);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+// Utility Classes
+.glass {
+  @include glass-effect;
+}
+
+.gradient-text {
+  @include gradient-text;
+}
+
+.hover-lift {
+  @include hover-lift;
+}
+
+.loading-skeleton {
+  @include loading-skeleton;
+}
+
+.pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.float {
+  animation: float 3s ease-in-out infinite;
+}
+
+// Dark mode support
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg-primary: #f8fafc;
+    --bg-secondary: #f1f5f9;
+    --bg-tertiary: #e2e8f0;
+    --bg-card: #ffffff;
+    --bg-elevated: #f8fafc;
+    
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #64748b;
+    
+    --border-color: #e2e8f0;
+    --border-light: #cbd5e1;
+    
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  }
+}

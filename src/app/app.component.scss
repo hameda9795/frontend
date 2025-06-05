@@ -1,0 +1,207 @@
+.app-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-primary);
+}
+
+// Modern Navbar Styling
+.navbar {
+  background: var(--bg-secondary);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border-color);
+  padding: 0 var(--space-lg);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: var(--shadow-md);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 70px;
+  
+  .nav-brand {
+    .brand-link {
+      text-decoration: none;
+      
+      h1 {
+        background: var(--gradient-primary);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-family: var(--font-family-heading);
+        font-weight: 700;
+        font-size: var(--font-size-2xl);
+        margin: 0;
+        transition: all var(--transition-normal);
+        
+        &:hover {
+          transform: scale(1.05);
+        }
+      }
+    }
+  }
+  
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: var(--space-lg);
+    
+    a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-weight: 500;
+      padding: var(--space-sm) var(--space-md);
+      border-radius: var(--radius-md);
+      transition: all var(--transition-fast);
+      position: relative;
+      
+      &:hover {
+        color: var(--text-primary);
+        background: var(--bg-tertiary);
+      }
+      
+      &.active {
+        color: var(--primary-color);
+        background: rgba(99, 102, 241, 0.1);
+        
+        &::after {
+          content: '';
+          position: absolute;
+          bottom: -2px;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 80%;
+          height: 2px;
+          background: var(--gradient-primary);
+          border-radius: 1px;
+        }
+      }
+    }
+    
+    .btn-logout {
+      background: transparent;
+      color: var(--error-color);
+      border: 1px solid var(--error-color);
+      padding: var(--space-xs) var(--space-md);
+      border-radius: var(--radius-md);
+      font-weight: 500;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      
+      &:hover {
+        background: var(--error-color);
+        color: white;
+        transform: translateY(-1px);
+      }
+    }
+  }
+  
+  // Mobile responsive
+  @media (max-width: 768px) {
+    padding: 0 var(--space-md);
+    
+    .nav-brand h1 {
+      font-size: var(--font-size-xl);
+    }
+    
+    .nav-links {
+      gap: var(--space-sm);
+      
+      a {
+        padding: var(--space-xs) var(--space-sm);
+        font-size: var(--font-size-sm);
+      }
+    }
+  }
+}
+
+// Main Content Area
+.main-content {
+  flex: 1;
+  padding: var(--space-xl) var(--space-lg);
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+  
+  @media (max-width: 768px) {
+    padding: var(--space-lg) var(--space-md);
+  }
+}
+
+// Modern Footer
+.footer {
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--border-color);
+  margin-top: auto;
+  
+  .footer-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: var(--space-xl) var(--space-lg);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    
+    p {
+      color: var(--text-muted);
+      margin: 0;
+      font-size: var(--font-size-sm);
+    }
+    
+    .footer-links {
+      display: flex;
+      gap: var(--space-lg);
+      
+      a {
+        color: var(--text-muted);
+        font-size: var(--font-size-sm);
+        transition: color var(--transition-fast);
+        
+        &:hover {
+          color: var(--text-primary);
+        }
+      }
+    }
+    
+    @media (max-width: 768px) {
+      flex-direction: column;
+      gap: var(--space-md);
+      text-align: center;
+      
+      .footer-links {
+        gap: var(--space-md);
+      }
+    }
+  }
+}
+
+// Add some beautiful animations
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.app-container {
+  animation: fadeIn 0.5s ease-out;
+}
+
+// Loading state for route transitions
+router-outlet + * {
+  animation: fadeInUp 0.4s ease-out;
+}

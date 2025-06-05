@@ -1,0 +1,245 @@
+<div class="upload-container">
+  <div class="upload-header">
+    <h1>📹 Video Uploaden</h1>
+    <a routerLink="/admin" class="btn btn-secondary">← Terug naar Dashboard</a>
+  </div>
+
+  <div class="upload-form-container">
+    <form [formGroup]="uploadForm" (ngSubmit)="onSubmit()" class="upload-form">
+      
+      <!-- Basic Information -->
+      <div class="form-section">
+        <h3>Basis Informatie</h3>
+        
+        <div class="form-group">
+          <label for="title">Titel *</label>
+          <input
+            type="text"
+            id="title"
+            formControlName="title"
+            class="form-control"
+            [class.is-invalid]="title?.invalid && title?.touched"
+            placeholder="Voer een titel in"
+          />
+          <div class="invalid-feedback" *ngIf="title?.invalid && title?.touched">
+            <div *ngIf="title?.errors?.['required']">Titel is verplicht</div>
+            <div *ngIf="title?.errors?.['minlength']">Titel moet minimaal 3 tekens bevatten</div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="description">Beschrijving</label>
+          <textarea
+            id="description"
+            formControlName="description"
+            class="form-control"
+            rows="4"
+            placeholder="Voer een beschrijving in"
+          ></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="poemText">Gedicht Tekst</label>
+          <textarea
+            id="poemText"
+            formControlName="poemText"
+            class="form-control"
+            rows="6"
+            placeholder="Voer de volledige gedicht tekst in"
+          ></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="hashtags">Hashtags</label>
+          <input
+            type="text"
+            id="hashtags"
+            formControlName="hashtags"
+            class="form-control"
+            placeholder="Bijvoorbeeld: muziek, poëzie, kunst (gescheiden door komma's)"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="contentType">Content Type *</label>
+          <select id="contentType" formControlName="contentType" class="form-control">
+            <option value="FREE">Gratis</option>
+            <option value="PREMIUM">Premium</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- File Uploads -->
+      <div class="form-section">
+        <h3>Bestanden</h3>
+        
+        <div class="form-group">
+          <label for="videoFile">Video Bestand *</label>
+          <input
+            type="file"
+            id="videoFile"
+            accept="video/*"
+            (change)="onVideoFileChange($event)"
+            class="form-control file-input"
+            required
+          />
+          <small class="form-text">Ondersteunde formaten: MP4, AVI, MOV</small>
+          <div class="file-info" *ngIf="selectedVideoFile">
+            Geselecteerd: {{ selectedVideoFile.name }}
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="coverImage">Cover Afbeelding</label>
+          <input
+            type="file"
+            id="coverImage"
+            accept="image/*"
+            (change)="onImageFileChange($event)"
+            class="form-control file-input"
+          />
+          <small class="form-text">Ondersteunde formaten: JPG, PNG, GIF</small>
+          <div class="file-info" *ngIf="selectedImageFile">
+            Geselecteerd: {{ selectedImageFile.name }}
+          </div>
+        </div>
+      </div>
+
+      <!-- SEO Section -->
+      <div class="form-section">
+        <h3>SEO Instellingen</h3>
+        
+        <div class="form-group">
+          <label for="seoTitle">SEO Titel</label>
+          <input
+            type="text"
+            id="seoTitle"
+            formControlName="seoTitle"
+            class="form-control"
+            placeholder="SEO geoptimaliseerde titel"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="seoDescription">SEO Beschrijving</label>
+          <textarea
+            id="seoDescription"
+            formControlName="seoDescription"
+            class="form-control"
+            rows="3"
+            placeholder="SEO geoptimaliseerde beschrijving"
+          ></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="seoKeywords">SEO Keywords</label>
+          <input
+            type="text"
+            id="seoKeywords"
+            formControlName="seoKeywords"
+            class="form-control"
+            placeholder="SEO keywords gescheiden door komma's"
+          />
+        </div>
+      </div>
+
+      <!-- External Links -->
+      <div class="form-section">
+        <h3>Externe Links</h3>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="spotifyLink">Spotify Link</label>
+            <input
+              type="url"
+              id="spotifyLink"
+              formControlName="spotifyLink"
+              class="form-control"
+              placeholder="https://open.spotify.com/..."
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="amazonLink">Amazon Link</label>
+            <input
+              type="url"
+              id="amazonLink"
+              formControlName="amazonLink"
+              class="form-control"
+              placeholder="https://amazon.com/..."
+            />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="appleMusicLink">Apple Music Link</label>
+            <input
+              type="url"
+              id="appleMusicLink"
+              formControlName="appleMusicLink"
+              class="form-control"
+              placeholder="https://music.apple.com/..."
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="itunesLink">iTunes Link</label>
+            <input
+              type="url"
+              id="itunesLink"
+              formControlName="itunesLink"
+              class="form-control"
+              placeholder="https://itunes.apple.com/..."
+            />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="youtubeMusicLink">YouTube Music Link</label>
+            <input
+              type="url"
+              id="youtubeMusicLink"
+              formControlName="youtubeMusicLink"
+              class="form-control"
+              placeholder="https://music.youtube.com/..."
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="instagramLink">Instagram Link</label>
+            <input
+              type="url"
+              id="instagramLink"
+              formControlName="instagramLink"
+              class="form-control"
+              placeholder="https://instagram.com/..."
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- Messages -->
+      <div class="success-message" *ngIf="successMessage">
+        {{ successMessage }}
+      </div>
+
+      <div class="error-message" *ngIf="errorMessage">
+        {{ errorMessage }}
+      </div>
+
+      <!-- Submit Button -->
+      <div class="form-actions">
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="uploadForm.invalid || !selectedVideoFile || isLoading"
+        >
+          <span *ngIf="isLoading" class="spinner"></span>
+          {{ isLoading ? 'Uploaden...' : 'Video Uploaden' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

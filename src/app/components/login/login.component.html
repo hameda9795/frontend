@@ -1,0 +1,105 @@
+<div class="login-container">
+  <div class="login-wrapper">
+    <mat-card class="login-card">
+      <mat-card-header class="login-header">
+        <mat-card-title>
+          <mat-icon class="login-icon">account_circle</mat-icon>
+          Inloggen
+        </mat-card-title>
+        <mat-card-subtitle>
+          Welkom terug bij Bitzomax
+        </mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content class="login-content">        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+          <!-- Username Field -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Gebruikersnaam</mat-label>
+            <input
+              matInput
+              type="text"
+              formControlName="username"
+              placeholder="Voer je gebruikersnaam in"
+              [class.error]="loginForm.get('username')?.invalid && loginForm.get('username')?.touched">
+            <mat-icon matSuffix>account_circle</mat-icon>
+            <mat-error *ngIf="loginForm.get('username')?.invalid && loginForm.get('username')?.touched">
+              {{ getUsernameErrorMessage() }}
+            </mat-error>
+          </mat-form-field>
+
+          <!-- Password Field -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Wachtwoord</mat-label>
+            <input
+              matInput
+              [type]="hidePassword ? 'password' : 'text'"
+              formControlName="password"
+              placeholder="Voer je wachtwoord in"
+              [class.error]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+            <button
+              mat-icon-button
+              matSuffix
+              type="button"
+              (click)="togglePasswordVisibility()"
+              [attr.aria-label]="'Wachtwoord ' + (hidePassword ? 'tonen' : 'verbergen')"
+              [attr.aria-pressed]="!hidePassword">
+              <mat-icon>{{ hidePassword ? 'visibility' : 'visibility_off' }}</mat-icon>
+            </button>
+            <mat-error *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+              {{ getPasswordErrorMessage() }}
+            </mat-error>
+          </mat-form-field>
+
+          <!-- Login Button -->
+          <button
+            mat-raised-button
+            color="primary"
+            type="submit"
+            class="login-button full-width"
+            [disabled]="loginForm.invalid || loading">
+            <span *ngIf="!loading">Inloggen</span>
+            <span *ngIf="loading" class="loading-content">
+              <mat-spinner diameter="20" class="inline-spinner"></mat-spinner>
+              Inloggen...
+            </span>
+          </button>
+
+          <!-- Forgot Password Link -->
+          <div class="forgot-password">
+            <a href="#" class="forgot-link">Wachtwoord vergeten?</a>
+          </div>
+        </form>
+      </mat-card-content>
+
+      <mat-card-actions class="login-actions">
+        <div class="signup-prompt">
+          <span>Nog geen account?</span>
+          <a routerLink="/register" class="signup-link">Registreer hier</a>
+        </div>
+      </mat-card-actions>
+    </mat-card>
+
+    <!-- Features Section -->
+    <div class="features-section">
+      <h3>Waarom Bitzomax?</h3>
+      <div class="features-list">
+        <div class="feature-item">
+          <mat-icon>play_circle_filled</mat-icon>
+          <span>HD Video Streaming</span>
+        </div>
+        <div class="feature-item">
+          <mat-icon>star</mat-icon>
+          <span>Premium Content</span>
+        </div>
+        <div class="feature-item">
+          <mat-icon>favorite</mat-icon>
+          <span>Favorieten & Likes</span>
+        </div>
+        <div class="feature-item">
+          <mat-icon>phone</mat-icon>
+          <span>Mobiel Geoptimaliseerd</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

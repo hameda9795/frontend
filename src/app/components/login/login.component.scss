@@ -1,0 +1,281 @@
+.login-container {
+  min-height: calc(100vh - 140px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-lg);
+  background: var(--bg-primary);
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--gradient-accent);
+    opacity: 0.05;
+    z-index: 1;
+  }
+}
+
+.login-wrapper {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 400px;
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.login-card {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: var(--radius-xl) !important;
+  box-shadow: var(--shadow-xl) !important;
+  overflow: hidden !important;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--gradient-primary);
+    z-index: 1;
+  }
+}
+
+.login-header {
+  background: var(--bg-elevated) !important;
+  padding: var(--space-xl) var(--space-xl) var(--space-lg) !important;
+  text-align: center !important;
+  border-bottom: 1px solid var(--border-color) !important;
+  
+  mat-card-title {
+    color: var(--text-primary) !important;
+    font-size: var(--font-size-2xl) !important;
+    font-weight: 600 !important;
+    margin-bottom: var(--space-sm) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: var(--space-sm) !important;
+    
+    .login-icon {
+      font-size: 28px !important;
+      width: 28px !important;
+      height: 28px !important;
+      color: var(--primary-color) !important;
+    }
+  }
+  
+  mat-card-subtitle {
+    color: var(--text-secondary) !important;
+    font-size: var(--font-size-sm) !important;
+    margin: 0 !important;
+  }
+}
+
+.login-content {
+  padding: var(--space-xl) !important;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  
+  .full-width {
+    width: 100% !important;
+  }
+  
+  mat-form-field {
+    .mat-mdc-text-field-wrapper {
+      background-color: var(--bg-secondary) !important;
+    }
+    
+    .mat-mdc-form-field-outline {
+      color: var(--border-color) !important;
+    }
+    
+    .mat-mdc-form-field-outline-thick {
+      color: var(--primary-color) !important;
+    }
+    
+    .mat-mdc-form-field-label {
+      color: var(--text-secondary) !important;
+    }
+    
+    .mat-mdc-input-element {
+      color: var(--text-primary) !important;
+      
+      &::placeholder {
+        color: var(--text-muted) !important;
+      }
+    }
+    
+    mat-icon {
+      color: var(--text-muted) !important;
+    }
+    
+    &.mat-focused {
+      mat-icon {
+        color: var(--primary-color) !important;
+      }
+    }
+    
+    &.error {
+      .mat-mdc-form-field-outline {
+        color: var(--error-color) !important;
+      }
+      
+      mat-icon {
+        color: var(--error-color) !important;
+      }
+    }
+  }
+  
+  mat-error {
+    color: var(--error-color) !important;
+    font-size: var(--font-size-xs) !important;
+    margin-top: var(--space-xs) !important;
+  }
+  
+  .password-toggle {
+    cursor: pointer !important;
+    transition: color var(--transition-fast) !important;
+    
+    &:hover {
+      color: var(--primary-color) !important;
+    }
+  }
+  
+  .submit-button {
+    margin-top: var(--space-md) !important;
+    padding: var(--space-md) var(--space-lg) !important;
+    font-size: var(--font-size-base) !important;
+    font-weight: 600 !important;
+    border-radius: var(--radius-lg) !important;
+    background: var(--gradient-primary) !important;
+    color: white !important;
+    box-shadow: var(--shadow-md) !important;
+    transition: all var(--transition-normal) !important;
+    
+    &:hover:not(:disabled) {
+      transform: translateY(-2px) !important;
+      box-shadow: var(--shadow-lg) !important;
+    }
+    
+    &:disabled {
+      opacity: 0.6 !important;
+      cursor: not-allowed !important;
+      transform: none !important;
+    }
+    
+    .loading-spinner {
+      margin-right: var(--space-sm) !important;
+    }
+  }
+}
+
+.register-link {
+  text-align: center;
+  margin-top: var(--space-lg);
+  padding-top: var(--space-lg);
+  border-top: 1px solid var(--border-color);
+  
+  p {
+    color: var(--text-secondary);
+    margin-bottom: var(--space-sm);
+    font-size: var(--font-size-sm);
+  }
+  
+  a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 500;
+    padding: var(--space-sm) var(--space-md);
+    border-radius: var(--radius-md);
+    transition: all var(--transition-fast);
+    display: inline-block;
+    
+    &:hover {
+      background: rgba(99, 102, 241, 0.1);
+      color: var(--primary-light);
+      transform: translateY(-1px);
+    }
+  }
+}
+
+// Error message styling
+.error-message {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid var(--error-color);
+  color: var(--error-color);
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-lg);
+  text-align: center;
+  font-size: var(--font-size-sm);
+  animation: shake 0.5s ease-in-out;
+}
+
+.success-message {
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid var(--success-color);
+  color: var(--success-color);
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-lg);
+  text-align: center;
+  font-size: var(--font-size-sm);
+  animation: fadeIn 0.5s ease-out;
+}
+
+// Responsive design
+@media (max-width: 480px) {
+  .login-container {
+    padding: var(--space-md);
+  }
+  
+  .login-wrapper {
+    max-width: 100%;
+  }
+  
+  .login-header {
+    padding: var(--space-lg) !important;
+    
+    mat-card-title {
+      font-size: var(--font-size-xl) !important;
+    }
+  }
+  
+  .login-content {
+    padding: var(--space-lg) !important;
+  }
+}
+
+// Animations
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

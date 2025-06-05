@@ -1,0 +1,97 @@
+<div class="video-detail-container" *ngIf="!loading && video">
+  <div class="video-header">
+    <button class="back-btn" (click)="goBack()">
+      ← Terug naar overzicht
+    </button>
+  </div>
+
+  <div class="video-content">
+    <div class="video-player-section">
+      <div class="video-wrapper" *ngIf="canWatch">
+        <video 
+          [src]="getVideoUrl()" 
+          controls 
+          class="video-player"
+          [poster]="getCoverImageUrl()">
+          Je browser ondersteunt geen video.
+        </video>
+      </div>
+      
+      <div class="premium-notice" *ngIf="!canWatch">
+        <div class="premium-lock">
+          <h3>🔒 Premium Content</h3>
+          <p>Deze video is alleen beschikbaar voor premium gebruikers.</p>
+          <button class="btn btn-premium" (click)="router.navigate(['/login'])">
+            Inloggen voor toegang
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="video-info">
+      <h1 class="video-title">{{ video.title }}</h1>
+      
+      <div class="video-stats">
+        <span class="stat">
+          👁️ {{ video.viewCount }} weergaven
+        </span>
+        <span class="stat">
+          ❤️ {{ video.likeCount }} likes
+        </span>
+        <span class="content-type" [class.premium]="video.contentType === 'PREMIUM'">
+          {{ video.contentType === 'FREE' ? 'Gratis' : 'Premium' }}
+        </span>
+      </div>
+
+      <div class="video-actions" *ngIf="authService.isAuthenticated()">
+        <button class="btn btn-like" (click)="toggleLike()">
+          ❤️ Vind ik leuk
+        </button>
+      </div>
+
+      <div class="video-description" *ngIf="video.description">
+        <h3>Beschrijving</h3>
+        <p>{{ video.description }}</p>
+      </div>
+
+      <div class="poem-text" *ngIf="video.poemText">
+        <h3>Gedicht</h3>
+        <div class="poem-content">{{ video.poemText }}</div>
+      </div>
+
+      <div class="hashtags" *ngIf="video.hashtags">
+        <h3>Tags</h3>
+        <div class="hashtag-list">
+          <span class="hashtag" *ngFor="let tag of video.hashtags.split(',')">
+            #{{ tag.trim() }}
+          </span>
+        </div>
+      </div>
+
+      <div class="external-links" *ngIf="video.spotifyLink || video.amazonLink || video.appleMusicLink">
+        <h3>Externe links</h3>
+        <div class="link-buttons">
+          <a *ngIf="video.spotifyLink" [href]="video.spotifyLink" target="_blank" class="btn btn-spotify">
+            🎵 Spotify
+          </a>
+          <a *ngIf="video.amazonLink" [href]="video.amazonLink" target="_blank" class="btn btn-amazon">
+            🛒 Amazon
+          </a>
+          <a *ngIf="video.appleMusicLink" [href]="video.appleMusicLink" target="_blank" class="btn btn-apple">
+            🍎 Apple Music
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="loading" *ngIf="loading">
+  <div class="spinner"></div>
+  <p>Video laden...</p>
+</div>
+
+<div class="error" *ngIf="error && !loading">
+  <h2>{{ error }}</h2>
+  <button class="btn btn-primary" (click)="goBack()">Terug naar overzicht</button>
+</div>

@@ -1,0 +1,94 @@
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatChipsModule } from '@angular/material/chips';
+import { RouterModule } from '@angular/router';
+import { VideoService } from '../../services/video.service';
+import { AuthService } from '../../services/auth.service';
+
+@Component({
+  selector: 'app-home',
+  standalone: true,
+  imports: [
+    CommonModule,
+    MatCardModule,
+    MatButtonModule,
+    MatIconModule,
+    MatChipsModule,
+    RouterModule
+  ],
+  templateUrl: './home.component.html',
+  styleUrls: ['./home.component.scss']
+})
+export class HomeComponent implements OnInit {
+  videos: any[] = [];
+  loading = true;
+  error = '';
+  selectedCategory = 'all';
+  categories = [
+    { value: 'all', label: 'Alle video\'s' },
+    { value: 'free', label: 'Gratis' },
+    { value: 'premium', label: 'Premium' }
+  ];
+
+  constructor(
+    private videoService: VideoService,
+    private authService: AuthService
+  ) {}
+
+  ngOnInit(): void {
+    this.loadVideos();
+  }
+
+  loadVideos(): void {
+    this.loading = true;
+    this.error = '';
+      this.videoService.getVideos().subscribe({
+      next: (videos: any[]) => {
+        this.videos = videos.filter((video: any) => {
+          if (this.selectedCategory === 'all') return true;
+          if (this.selectedCategory === 'free') return video.contentType === 'FREE';
+          if (this.selectedCategory === 'premium') return video.contentType === 'PREMIUM';
+          return true;
+        });
+        this.loading = false;
+      },
+      error: (err: any) => {
+        this.error = 'Fout bij het laden van video\'s';
+        this.loading = false;
+        console.error(err);
+      }
+    });
+  }
+
+  onCategoryChange(category: string): void {
+    this.selectedCategory = category;
+    this.loadVideos();
+  }
+
+  canWatchVideo(video: any): boolean {
+    if (video.contentType === 'FREE') return true;
+    return this.authService.isAuthenticated() && this.authService.getCurrentUser()?.premium;
+  }
+
+  getVideoThumbnail(video: any): string {
+    return video.coverImageUrl || 'assets/images/default-thumbnail.jpg';
+  }
+
+  formatDuration(duration: number): string {
+    const minutes = Math.floor(duration / 60);
+    const seconds = duration % 60;
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  }
+
+  formatViews(views: number): string {
+    if (views >= 1000000) {
+      return (views / 1000000).toFixed(1) + 'M';
+    } else if (views >= 1000) {
+      return (views / 1000).toFixed(1) + 'K';
+    }
+    return views.toString();
+  }
+}

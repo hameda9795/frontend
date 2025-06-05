@@ -1,0 +1,64 @@
+<div class="profile-container" *ngIf="!loading && user">
+  <div class="profile-header">
+    <h1>Mijn Profiel</h1>
+  </div>
+
+  <div class="profile-content">
+    <div class="profile-card">
+      <div class="user-avatar">
+        <div class="avatar-circle">
+          {{ user.username.charAt(0).toUpperCase() }}
+        </div>
+      </div>
+
+      <div class="user-info">
+        <h2>{{ user.username }}</h2>
+        <p class="email">{{ user.email }}</p>
+        
+        <div class="user-badges">
+          <span class="badge" *ngFor="let role of user.roles" [class.admin]="role === 'ROLE_ADMIN'">
+            {{ role === 'ROLE_ADMIN' ? 'Beheerder' : 'Gebruiker' }}
+          </span>
+          <span class="badge premium" *ngIf="user.premium">
+            Premium
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="profile-actions">
+      <div class="action-buttons">
+        <button class="btn btn-admin" *ngIf="isAdmin()" routerLink="/admin">
+          🛠️ Beheerderspaneel
+        </button>
+        
+        <button class="btn btn-logout" (click)="logout()">
+          🚪 Uitloggen
+        </button>
+      </div>
+    </div>
+
+    <div class="profile-stats">
+      <h3>Account Informatie</h3>
+      <div class="stats-grid">
+        <div class="stat-item">
+          <span class="stat-label">Account type:</span>
+          <span class="stat-value">{{ user.premium ? 'Premium' : 'Gratis' }}</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Gebruikers ID:</span>
+          <span class="stat-value">#{{ user.id }}</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Rollen:</span>
+          <span class="stat-value">{{ user.roles.length }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="loading" *ngIf="loading">
+  <div class="spinner"></div>
+  <p>Profiel laden...</p>
+</div>
