@@ -68,7 +68,6 @@ export class VideoDetailComponent implements OnInit {
       });
     }
   }
-
   toggleLike(): void {
     if (!this.authService.isAuthenticated()) {
       this.router.navigate(['/login']);
@@ -80,10 +79,34 @@ export class VideoDetailComponent implements OnInit {
         next: (updatedVideo: Video) => {
           if (this.video) {
             this.video.likeCount = updatedVideo.likeCount;
+            this.video.isLiked = updatedVideo.isLiked;
           }
         },
         error: (error: any) => {
           console.error('Error toggling like:', error);
+        }
+      });
+    }
+  }
+
+  toggleFavorite(): void {
+    if (!this.authService.isAuthenticated()) {
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    if (this.video) {
+      this.videoService.toggleFavorite(this.video.id).subscribe({
+        next: (updatedVideo: Video) => {
+          if (this.video) {
+            this.video.isFavorited = updatedVideo.isFavorited;
+            if (updatedVideo.favoriteCount !== undefined) {
+              this.video.favoriteCount = updatedVideo.favoriteCount;
+            }
+          }
+        },
+        error: (error: any) => {
+          console.error('Error toggling favorite:', error);
         }
       });
     }

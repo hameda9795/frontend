@@ -713,6 +713,100 @@
           background: linear-gradient(45deg, #f69642, #e43f8a, #9148c2, #6366f1);
           box-shadow: 0 4px 12px rgba(221, 42, 123, 0.4);
         }
+      }    }
+  }
+  // Video Action Buttons
+  .video-actions {
+    display: flex;
+    gap: var(--space-sm);
+    margin-top: var(--space-md);
+    padding-top: var(--space-md);
+    border-top: 1px solid rgba(148, 163, 184, 0.1);
+    
+    .action-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-xs);
+      padding: var(--space-sm) var(--space-md);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      border-radius: var(--radius-lg);
+      background: var(--bg-card);
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all var(--transition-normal);
+      font-size: var(--font-size-sm);
+      font-weight: 500;
+      flex: 1;
+      
+      .btn-text {
+        transition: all var(--transition-normal);
+      }
+      
+      .like-count {
+        font-size: var(--font-size-xs);
+        background: rgba(148, 163, 184, 0.1);
+        padding: 2px 6px;
+        border-radius: var(--radius-sm);
+        margin-left: var(--space-xs);
+      }
+      
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        border-color: rgba(148, 163, 184, 0.3);
+      }
+      
+      &.like-btn {
+        &:hover {
+          background: rgba(239, 68, 68, 0.1);
+          border-color: var(--error-color);
+          color: var(--error-color);
+        }
+        
+        &.liked {
+          background: rgba(239, 68, 68, 0.1);
+          border-color: var(--error-color);
+          color: var(--error-color);
+          
+          .btn-text {
+            font-weight: 600;
+          }
+          
+          .like-count {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--error-color);
+          }
+          
+          &:hover {
+            background: rgba(239, 68, 68, 0.2);
+            transform: translateY(-2px) scale(1.02);
+          }
+        }      }
+      
+      &.favorite-btn {
+        &:hover {
+          background: rgba(255, 235, 59, 0.1);
+          border-color: #ffeb3b;
+          color: #f9a825;
+        }
+        
+        &.favorited {
+          background: rgba(255, 235, 59, 0.15);
+          border-color: #ffeb3b;
+          color: #f9a825;
+          box-shadow: 0 2px 8px rgba(255, 235, 59, 0.3);
+          
+          .btn-text {
+            font-weight: 600;
+          }
+          
+          &:hover {
+            background: rgba(255, 235, 59, 0.25);
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 4px 12px rgba(255, 235, 59, 0.4);
+          }
+        }
       }
     }
   }

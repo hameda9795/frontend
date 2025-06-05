@@ -3,7 +3,30 @@
     <h1>Mijn Profiel</h1>
   </div>
 
-  <div class="profile-content">
+  <!-- Tab Navigation -->
+  <div class="profile-tabs">
+    <button 
+      class="tab-btn" 
+      [class.active]="activeTab === 'profile'"
+      (click)="setActiveTab('profile')">
+      👤 Profiel
+    </button>
+    <button 
+      class="tab-btn" 
+      [class.active]="activeTab === 'liked'"
+      (click)="setActiveTab('liked')">
+      ❤️ Gelikte Video's ({{ likedVideos.length }})
+    </button>
+    <button 
+      class="tab-btn" 
+      [class.active]="activeTab === 'favorites'"
+      (click)="setActiveTab('favorites')">
+      ⭐ Favorieten ({{ favoriteVideos.length }})
+    </button>
+  </div>
+
+  <!-- Profile Tab Content -->
+  <div class="profile-content" *ngIf="activeTab === 'profile'">
     <div class="profile-card">
       <div class="user-avatar">
         <div class="avatar-circle">
@@ -52,6 +75,140 @@
         <div class="stat-item">
           <span class="stat-label">Rollen:</span>
           <span class="stat-value">{{ user.roles.length }}</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Gelikte video's:</span>
+          <span class="stat-value">{{ likedVideos.length }}</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Favoriete video's:</span>
+          <span class="stat-value">{{ favoriteVideos.length }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Liked Videos Tab Content -->
+  <div class="video-section" *ngIf="activeTab === 'liked'">
+    <div class="section-header">
+      <h2>❤️ Gelikte Video's</h2>
+      <p *ngIf="likedVideos.length === 0 && !loadingLikedVideos">Je hebt nog geen video's geliket.</p>
+    </div>
+
+    <div class="loading" *ngIf="loadingLikedVideos">
+      <div class="spinner"></div>
+      <p>Gelikte video's laden...</p>
+    </div>
+
+    <div class="videos-grid" *ngIf="!loadingLikedVideos && likedVideos.length > 0">
+      <div class="video-card" *ngFor="let video of likedVideos" (click)="navigateToVideo(video)">
+        <div class="video-thumbnail">
+          <img 
+            [src]="video.coverImageUrl ? '/api/files/' + video.coverImageUrl : '/assets/images/default-thumbnail.svg'" 
+            [alt]="video.title"
+            class="cover-image"
+            loading="lazy">
+          
+          <div class="premium-badge" *ngIf="video.contentType === 'PREMIUM'">
+            <span>👑 Premium</span>
+          </div>
+          
+          <div class="play-overlay">
+            <div class="play-button">
+              <span>▶️</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="video-info">
+          <h3 class="video-title">{{ video.title }}</h3>
+          <p class="video-description" *ngIf="video.description">{{ video.description }}</p>
+          
+          <div class="video-meta">
+            <span class="views">👁️ {{ video.viewCount || 0 }}</span>
+            <span class="likes">❤️ {{ video.likeCount || 0 }}</span>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="video-actions">
+            <button 
+              class="action-btn like-btn liked"
+              (click)="toggleLike(video); $event.stopPropagation()"
+              title="Unlike">
+              <span class="icon">❤️</span>
+            </button>
+            
+            <button 
+              class="action-btn favorite-btn" 
+              [class.favorited]="video.isFavorited"
+              (click)="toggleFavorite(video); $event.stopPropagation()"
+              title="{{ video.isFavorited ? 'Remove from favorites' : 'Add to favorites' }}">
+              <span class="icon">{{ video.isFavorited ? '⭐' : '☆' }}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Favorite Videos Tab Content -->
+  <div class="video-section" *ngIf="activeTab === 'favorites'">
+    <div class="section-header">
+      <h2>⭐ Favoriete Video's</h2>
+      <p *ngIf="favoriteVideos.length === 0 && !loadingFavoriteVideos">Je hebt nog geen favoriete video's.</p>
+    </div>
+
+    <div class="loading" *ngIf="loadingFavoriteVideos">
+      <div class="spinner"></div>
+      <p>Favoriete video's laden...</p>
+    </div>
+
+    <div class="videos-grid" *ngIf="!loadingFavoriteVideos && favoriteVideos.length > 0">
+      <div class="video-card" *ngFor="let video of favoriteVideos" (click)="navigateToVideo(video)">
+        <div class="video-thumbnail">
+          <img 
+            [src]="video.coverImageUrl ? '/api/files/' + video.coverImageUrl : '/assets/images/default-thumbnail.svg'" 
+            [alt]="video.title"
+            class="cover-image"
+            loading="lazy">
+          
+          <div class="premium-badge" *ngIf="video.contentType === 'PREMIUM'">
+            <span>👑 Premium</span>
+          </div>
+          
+          <div class="play-overlay">
+            <div class="play-button">
+              <span>▶️</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="video-info">
+          <h3 class="video-title">{{ video.title }}</h3>
+          <p class="video-description" *ngIf="video.description">{{ video.description }}</p>
+          
+          <div class="video-meta">
+            <span class="views">👁️ {{ video.viewCount || 0 }}</span>
+            <span class="likes">❤️ {{ video.likeCount || 0 }}</span>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="video-actions">
+            <button 
+              class="action-btn like-btn" 
+              [class.liked]="video.isLiked"
+              (click)="toggleLike(video); $event.stopPropagation()"
+              title="{{ video.isLiked ? 'Unlike' : 'Like' }}">
+              <span class="icon">{{ video.isLiked ? '❤️' : '🤍' }}</span>
+            </button>
+            
+            <button 
+              class="action-btn favorite-btn favorited"
+              (click)="toggleFavorite(video); $event.stopPropagation()"
+              title="Remove from favorites">
+              <span class="icon">⭐</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>

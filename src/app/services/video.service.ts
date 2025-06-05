@@ -23,6 +23,9 @@ export interface Video {
   instagramLink: string;
   viewCount: number;
   likeCount: number;
+  favoriteCount?: number;
+  isLiked?: boolean;
+  isFavorited?: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -143,9 +146,20 @@ export class VideoService {
       headers: this.authService.getAuthHeaders()
     });
   }
-
   toggleFavorite(id: number): Observable<Video> {
     return this.http.post<Video>(`${this.apiUrl}/${id}/favorite`, {}, {
+      headers: this.authService.getAuthHeaders()
+    });
+  }
+
+  getLikedVideos(page: number = 0, size: number = 10): Observable<PageResponse<Video>> {
+    return this.http.get<PageResponse<Video>>(`${this.apiUrl}/liked?page=${page}&size=${size}`, {
+      headers: this.authService.getAuthHeaders()
+    });
+  }
+
+  getFavoriteVideos(page: number = 0, size: number = 10): Observable<PageResponse<Video>> {
+    return this.http.get<PageResponse<Video>>(`${this.apiUrl}/favorites?page=${page}&size=${size}`, {
       headers: this.authService.getAuthHeaders()
     });
   }

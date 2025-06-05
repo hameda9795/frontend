@@ -41,11 +41,21 @@
         <span class="content-type" [class.premium]="video.contentType === 'PREMIUM'">
           {{ video.contentType === 'FREE' ? 'Gratis' : 'Premium' }}
         </span>
-      </div>
-
-      <div class="video-actions" *ngIf="authService.isAuthenticated()">
-        <button class="btn btn-like" (click)="toggleLike()">
-          ❤️ Vind ik leuk
+      </div>      <div class="video-actions" *ngIf="authService.isAuthenticated()">
+        <button 
+          class="btn btn-like" 
+          [class.liked]="video.isLiked"
+          (click)="toggleLike()">
+          <span class="btn-text">{{ video.isLiked ? 'Liked' : 'Like' }}</span>
+          <span class="count">({{ video.likeCount || 0 }})</span>
+        </button>
+        
+        <button 
+          class="btn btn-favorite" 
+          [class.favorited]="video.isFavorited"
+          (click)="toggleFavorite()">
+          <span class="btn-text">{{ video.isFavorited ? 'Favorited' : 'Favorite' }}</span>
+          <span class="count" *ngIf="video.favoriteCount">({{ video.favoriteCount }})</span>
         </button>
       </div>
 

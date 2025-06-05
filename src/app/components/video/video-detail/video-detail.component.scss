@@ -96,12 +96,97 @@
       color: var(--text-secondary);
     }
   }
-  
-  .video-actions {
+    .video-actions {
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-md);
     margin: var(--space-xl) 0;
+    
+    .btn {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      padding: var(--space-md) var(--space-lg);
+      border-radius: var(--radius-lg);
+      font-weight: 500;
+      transition: all var(--transition-normal);
+      cursor: pointer;
+      border: 1px solid var(--border-color);
+      background: var(--bg-card);
+      color: var(--text-primary);
+        .icon {
+        font-size: 1.2em;
+      }
+      
+      .btn-text {
+        font-weight: 500;
+        transition: all var(--transition-normal);
+      }
+      
+      .count {
+        font-size: 0.9em;
+        opacity: 0.8;
+        background: rgba(148, 163, 184, 0.1);
+        padding: 2px 8px;
+        border-radius: var(--radius-sm);
+        margin-left: var(--space-xs);
+      }
+      
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+      }
+      
+      &.btn-like {
+        &:hover {
+          background: rgba(239, 68, 68, 0.1);
+          border-color: var(--error-color);
+          color: var(--error-color);
+        }
+        
+        &.liked {
+          background: rgba(239, 68, 68, 0.1);
+          border-color: var(--error-color);
+          color: var(--error-color);
+          
+          .btn-text {
+            font-weight: 600;
+          }
+          
+          .count {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--error-color);
+          }
+          
+          &:hover {
+            background: rgba(239, 68, 68, 0.2);
+          }
+        }
+      }
+        &.btn-favorite {
+        &:hover {
+          background: rgba(255, 235, 59, 0.1);
+          border-color: #ffeb3b;
+          color: #f9a825;
+        }
+        
+        &.favorited {
+          background: rgba(255, 235, 59, 0.15);
+          border-color: #ffeb3b;
+          color: #f9a825;
+          box-shadow: 0 2px 8px rgba(255, 235, 59, 0.3);
+          
+          .btn-text {
+            font-weight: 600;
+          }
+          
+          &:hover {
+            background: rgba(255, 235, 59, 0.25);
+            box-shadow: 0 4px 12px rgba(255, 235, 59, 0.4);
+          }
+        }
+      }
+    }
     
     .action-btn {
       display: flex;

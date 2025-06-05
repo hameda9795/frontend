@@ -33,10 +33,9 @@ export class HomeComponent implements OnInit {
     { value: 'free', label: 'Gratis' },
     { value: 'premium', label: 'Premium' }
   ];
-
   constructor(
     private videoService: VideoService,
-    private authService: AuthService
+    public authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -132,9 +131,48 @@ export class HomeComponent implements OnInit {
     }
     return views.toString();
   }
-
   hasExternalLinks(video: any): boolean {
     return !!(video.spotifyLink || video.amazonLink || video.appleMusicLink || 
               video.itunesLink || video.youtubeMusicLink || video.instagramLink);
+  }
+
+  toggleLike(video: any): void {
+    if (!this.authService.isAuthenticated()) {
+      return;
+    }
+
+    this.videoService.toggleLike(video.id).subscribe({
+      next: (updatedVideo) => {
+        const index = this.videos.findIndex(v => v.id === video.id);
+        if (index !== -1) {
+          this.videos[index].likeCount = updatedVideo.likeCount;
+          this.videos[index].isLiked = updatedVideo.isLiked;
+        }
+      },
+      error: (error) => {
+        console.error('Error toggling like:', error);
+      }
+    });
+  }
+
+  toggleFavorite(video: any): void {
+    if (!this.authService.isAuthenticated()) {
+      return;
+    }
+
+    this.videoService.toggleFavorite(video.id).subscribe({
+      next: (updatedVideo) => {
+        const index = this.videos.findIndex(v => v.id === video.id);
+        if (index !== -1) {
+          this.videos[index].isFavorited = updatedVideo.isFavorited;
+          if (updatedVideo.favoriteCount !== undefined) {
+            this.videos[index].favoriteCount = updatedVideo.favoriteCount;
+          }
+        }
+      },
+      error: (error) => {
+        console.error('Error toggling favorite:', error);
+      }
+    });
   }
 }
