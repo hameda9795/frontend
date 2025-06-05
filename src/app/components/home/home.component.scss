@@ -581,6 +581,141 @@
       }
     }
   }
+
+  // External Links Section
+  .external-links {
+    margin-top: var(--space-md);
+    padding-top: var(--space-md);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    
+    .external-links-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+      align-items: center;
+      justify-content: flex-start;
+      
+      // Mobile: smaller gaps
+      @media (max-width: 575px) {
+        gap: var(--space-xs);
+      }
+    }
+    
+    .external-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-md);
+      transition: all var(--transition-normal);
+      text-decoration: none;
+      position: relative;
+      cursor: pointer;
+      
+      // Mobile: slightly smaller
+      @media (max-width: 575px) {
+        width: 28px;
+        height: 28px;
+      }
+      
+      &:hover {
+        transform: translateY(-2px) scale(1.1);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      }
+      
+      .platform-logo {
+        width: 20px;
+        height: 20px;
+        transition: all var(--transition-normal);
+        
+        // Mobile: slightly smaller
+        @media (max-width: 575px) {
+          width: 18px;
+          height: 18px;
+        }
+      }
+      
+      // Platform-specific styling
+      &.spotify-link {
+        background: #1DB954;
+        
+        .platform-logo {
+          fill: white;
+        }
+        
+        &:hover {
+          background: #1ed760;
+          box-shadow: 0 4px 12px rgba(29, 185, 84, 0.4);
+        }
+      }
+      
+      &.amazon-link {
+        background: #FF9900;
+        
+        .platform-logo {
+          fill: white;
+        }
+        
+        &:hover {
+          background: #ffad1a;
+          box-shadow: 0 4px 12px rgba(255, 153, 0, 0.4);
+        }
+      }
+      
+      &.apple-link {
+        background: #000000;
+        
+        .platform-logo {
+          fill: white;
+        }
+        
+        &:hover {
+          background: #333333;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+        }
+      }
+      
+      &.itunes-link {
+        background: linear-gradient(135deg, #FA233B, #FB5C74);
+        
+        .platform-logo {
+          fill: white;
+        }
+        
+        &:hover {
+          background: linear-gradient(135deg, #fb4158, #fc7391);
+          box-shadow: 0 4px 12px rgba(250, 35, 59, 0.4);
+        }
+      }
+      
+      &.youtube-link {
+        background: #FF0000;
+        
+        .platform-logo {
+          fill: white;
+        }
+        
+        &:hover {
+          background: #ff1a1a;
+          box-shadow: 0 4px 12px rgba(255, 0, 0, 0.4);
+        }
+      }
+      
+      &.instagram-link {
+        background: linear-gradient(45deg, #F58529, #DD2A7B, #8134AF, #515BD4);
+        
+        .platform-logo {
+          fill: white;
+        }
+        
+        &:hover {
+          background: linear-gradient(45deg, #f69642, #e43f8a, #9148c2, #6366f1);
+          box-shadow: 0 4px 12px rgba(221, 42, 123, 0.4);
+        }
+      }
+    }
+  }
 }
 
 // Loading and Error States

@@ -132,4 +132,9 @@ export class HomeComponent implements OnInit {
     }
     return views.toString();
   }
+
+  hasExternalLinks(video: any): boolean {
+    return !!(video.spotifyLink || video.amazonLink || video.appleMusicLink || 
+              video.itunesLink || video.youtubeMusicLink || video.instagramLink);
+  }
 }
