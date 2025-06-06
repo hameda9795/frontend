@@ -1,13 +1,22 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { AuthService } from '../../../services/auth.service';
 import { VideoService, Video } from '../../../services/video.service';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [
+    CommonModule, 
+    RouterModule,
+    MatCardModule,
+    MatButtonModule,
+    MatIconModule
+  ],
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss']
 })
@@ -19,9 +28,10 @@ export class ProfileComponent implements OnInit {
   loadingLikedVideos = true;
   loadingFavoriteVideos = true;
   activeTab = 'profile'; // 'profile', 'liked', 'favorites'
-
+  playingVideoId: number | null = null;
+  viewIncrementedVideos: Set<number> = new Set();
   constructor(
-    private authService: AuthService,
+    public authService: AuthService,
     private videoService: VideoService,
     private router: Router
   ) {}
@@ -122,7 +132,6 @@ export class ProfileComponent implements OnInit {
   isAdmin(): boolean {
     return this.authService.isAdmin();
   }
-
   formatViews(views: number): string {
     if (views >= 1000000) {
       return (views / 1000000).toFixed(1) + 'M';
@@ -130,5 +139,68 @@ export class ProfileComponent implements OnInit {
       return (views / 1000).toFixed(1) + 'K';
     }
     return views.toString();
+  }
+
+  // Video player functionality
+  playVideo(video: Video): void {
+    if (this.canWatchVideo(video)) {
+      this.stopVideo();
+      this.playingVideoId = video.id;
+    }
+  }
+
+  stopVideo(): void {
+    this.playingVideoId = null;
+  }
+
+  canWatchVideo(video: Video): boolean {
+    if (video.contentType === 'FREE') return true;
+    return this.authService.isAuthenticated() && this.authService.getCurrentUser()?.premium;
+  }
+
+  getVideoThumbnail(video: Video): string {
+    if (video.coverImageUrl) {
+      return this.videoService.getCoverImageUrl(video.coverImageUrl);
+    }
+    return 'assets/images/default-thumbnail.svg';
+  }
+
+  getVideoUrl(videoUrl: string): string {
+    return this.videoService.getVideoUrl(videoUrl);
+  }
+
+  onVideoPlay(video: Video): void {
+    if (this.viewIncrementedVideos.has(video.id)) {
+      return;
+    }
+    
+    this.viewIncrementedVideos.add(video.id);
+    
+    this.videoService.incrementView(video.id).subscribe({
+      next: (updatedVideo) => {
+        // Update the video in the appropriate array with new view count
+        const likedIndex = this.likedVideos.findIndex(v => v.id === video.id);
+        if (likedIndex !== -1) {
+          this.likedVideos[likedIndex].viewCount = updatedVideo.viewCount;
+        }
+        
+        const favoriteIndex = this.favoriteVideos.findIndex(v => v.id === video.id);
+        if (favoriteIndex !== -1) {
+          this.favoriteVideos[favoriteIndex].viewCount = updatedVideo.viewCount;
+        }
+      },
+      error: (error) => {
+        console.error('Error incrementing view:', error);
+        this.viewIncrementedVideos.delete(video.id);
+      }
+    });
+  }
+
+  onImageError(event: any): void {
+    event.target.src = 'assets/images/default-thumbnail.svg';
+  }
+  hasExternalLinks(video: Video): boolean {
+    return !!(video.spotifyLink || video.amazonLink || video.appleMusicLink || 
+              video.itunesLink || video.youtubeMusicLink || video.instagramLink);
   }
 }
