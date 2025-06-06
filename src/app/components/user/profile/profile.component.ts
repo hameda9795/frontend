@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChildren, QueryList, ElementRef, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
@@ -24,7 +24,9 @@ import { MessageService, MessageResponse } from '../../../services/message.servi
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss']
 })
-export class ProfileComponent implements OnInit {
+export class ProfileComponent implements OnInit, OnDestroy {
+  @ViewChildren('videoPlayer') videoPlayers!: QueryList<ElementRef<HTMLVideoElement>>;
+  
   user: any = null;
   loading = true;
   likedVideos: Video[] = [];
@@ -44,7 +46,7 @@ export class ProfileComponent implements OnInit {
   showReplyForm: { [key: number]: boolean } = {};
   replyText: { [key: number]: string } = {};
   playingVideoId: number | null = null;
-  viewIncrementedVideos: Set<number> = new Set();  constructor(
+  viewIncrementedVideos: Set<number> = new Set();constructor(
     public authService: AuthService,
     private videoService: VideoService,
     private messageService: MessageService,
@@ -54,6 +56,11 @@ export class ProfileComponent implements OnInit {
     this.loadLikedVideos();
     this.loadFavoriteVideos();
     this.loadMessages();
+  }
+
+  ngOnDestroy(): void {
+    // Stop any playing videos when component is destroyed
+    this.stopVideo();
   }
 
   loadUserProfile(): void {
@@ -155,17 +162,39 @@ export class ProfileComponent implements OnInit {
     }
     return views.toString();
   }
-
   // Video player functionality
   playVideo(video: Video): void {
     if (this.canWatchVideo(video)) {
-      this.stopVideo();
+      this.stopVideo(); // Stop any currently playing video
       this.playingVideoId = video.id;
     }
   }
 
   stopVideo(): void {
+    // Pause all video elements
+    if (this.videoPlayers) {
+      this.videoPlayers.forEach(videoRef => {
+        const videoElement = videoRef.nativeElement;
+        if (videoElement && !videoElement.paused) {
+          videoElement.pause();
+          videoElement.currentTime = 0; // Reset to beginning
+        }
+      });
+    }
     this.playingVideoId = null;
+  }
+  onTabChange(): void {
+    // Stop any playing video when switching tabs
+    this.stopVideo();
+  }
+
+  @HostListener('document:keydown.escape', ['$event'])
+  onEscapeKey(event: KeyboardEvent): void {
+    // Stop video when Escape key is pressed
+    if (this.playingVideoId !== null) {
+      this.stopVideo();
+      event.preventDefault();
+    }
   }
 
   canWatchVideo(video: Video): boolean {

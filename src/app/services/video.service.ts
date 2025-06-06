@@ -26,6 +26,7 @@ export interface Video {
   favoriteCount?: number;
   isLiked?: boolean;
   isFavorited?: boolean;
+  duration?: number; // Duration in seconds
   createdAt: string;
   updatedAt: string;
 }

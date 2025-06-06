@@ -48,10 +48,9 @@
       </div>
     </div>
   </div>
-
   <!-- Tab Navigation -->
   <div class="profile-tabs">
-    <mat-tab-group [(selectedIndex)]="selectedTabIndex" animationDuration="300ms">
+    <mat-tab-group [(selectedIndex)]="selectedTabIndex" animationDuration="300ms" (selectedTabChange)="onTabChange()">
       <mat-tab>
         <ng-template mat-tab-label>
           <mat-icon>dashboard</mat-icon>
@@ -169,24 +168,134 @@
           <mat-icon>favorite</mat-icon>
           <span>Gelikte Video's</span>
           <span class="tab-count">{{ likedVideos.length }}</span>
-        </ng-template>
-        <div class="tab-content">
+        </ng-template>        <div class="tab-content">
           <div class="videos-section" *ngIf="likedVideos.length > 0; else noLikedVideos">
-            <div class="videos-grid">              <div class="video-card" *ngFor="let video of likedVideos">
-                <div class="video-thumbnail" (click)="watchVideo(video.id)">
-                  <img [src]="video.coverImageUrl" [alt]="video.title" />
-                  <div class="video-overlay">
-                    <mat-icon class="play-btn">play_arrow</mat-icon>
+            <div class="videos-grid">              <div *ngFor="let video of likedVideos" class="video-card" (click)="playVideo(video)">
+                <!-- Video Thumbnail with 9:16 Aspect Ratio -->
+                <div class="video-thumbnail">
+                  <!-- Video Player (Hidden by default) -->
+                  <video 
+                    #videoPlayer
+                    *ngIf="playingVideoId === video.id && canWatchVideo(video)"
+                    [src]="getVideoUrl(video.videoUrl)" 
+                    class="video-player"
+                    controls
+                    autoplay
+                    (click)="$event.stopPropagation()"
+                    (play)="onVideoPlay(video)"
+                    (ended)="stopVideo()"
+                    (pause)="stopVideo()">
+                  </video>
+                  
+                  <!-- Stop Button Overlay for playing video -->
+                  <div *ngIf="playingVideoId === video.id" class="stop-overlay">
+                    <button class="stop-button" (click)="stopVideo(); $event.stopPropagation()">
+                      <mat-icon>stop</mat-icon>
+                    </button>
                   </div>
-                  <!-- <div class="video-duration">{{ formatDuration(video.duration) }}</div> -->
+                  
+                  <!-- Cover Image -->
+                  <img 
+                    *ngIf="playingVideoId !== video.id"
+                    [src]="getVideoThumbnail(video)" 
+                    [alt]="video.title"
+                    class="cover-image"
+                    (error)="onImageError($event)">
+                  
+                  <!-- Play Button Overlay -->
+                  <div *ngIf="playingVideoId !== video.id" class="play-overlay">
+                    <div class="play-button">
+                      <mat-icon>{{ canWatchVideo(video) ? 'play_arrow' : 'lock' }}</mat-icon>
+                    </div>
+                  </div>
+                  
+                  <!-- Premium Badge -->
+                  <div *ngIf="video.contentType === 'PREMIUM'" class="premium-badge">
+                    <mat-icon>star</mat-icon>
+                    <span>Premium</span>
+                  </div>
+                  
+                  <!-- Duration Badge -->
+                  <div *ngIf="video.duration" class="duration-badge">
+                    {{ formatDuration(video.duration) }}
+                  </div>
                 </div>
+
+                <!-- Video Info -->
                 <div class="video-info">
                   <h3 class="video-title">{{ video.title }}</h3>
-                  <p class="video-description">{{ video.description }}</p>
+                  <p class="video-description" *ngIf="video.description">{{ video.description }}</p>
+                  
                   <div class="video-meta">
-                    <span class="video-date">{{ video.createdAt | date:'dd MMM yyyy' }}</span>
-                    <button class="unlike-btn" (click)="unlikeVideo(video.id)">
-                      <mat-icon>favorite</mat-icon>
+                    <span class="views">
+                      <span class="icon">👁️</span>
+                      {{ formatViews(video.viewCount || 0) }}
+                    </span>
+                    <span class="likes">
+                      <span class="icon">❤️</span>
+                      {{ video.likeCount || 0 }}
+                    </span>
+                    <span class="content-type" [class.premium]="video.contentType === 'PREMIUM'">
+                      <span class="icon">{{ video.contentType === 'PREMIUM' ? '⭐' : '🆓' }}</span>
+                      {{ video.contentType === 'PREMIUM' ? 'Premium' : 'Gratis' }}
+                    </span>
+                  </div>
+
+                  <!-- Hashtags -->
+                  <div class="hashtags" *ngIf="video.hashtags">
+                    <span class="hashtag" *ngFor="let tag of video.hashtags.split(',').slice(0, 3)">
+                      {{ tag.trim() }}
+                    </span>
+                  </div>
+
+                  <!-- External Links -->
+                  <div class="external-links" *ngIf="hasExternalLinks(video)">
+                    <div class="platform-links">
+                      <a *ngIf="video.spotifyLink" [href]="video.spotifyLink" target="_blank" class="platform-link spotify-link" (click)="$event.stopPropagation()">
+                        <span class="platform-logo">🎵</span>
+                      </a>
+                      <a *ngIf="video.amazonLink" [href]="video.amazonLink" target="_blank" class="platform-link amazon-link" (click)="$event.stopPropagation()">
+                        <span class="platform-logo">🛒</span>
+                      </a>
+                      <a *ngIf="video.appleMusicLink" [href]="video.appleMusicLink" target="_blank" class="platform-link apple-link" (click)="$event.stopPropagation()">
+                        <span class="platform-logo">🍎</span>
+                      </a>
+                      <a *ngIf="video.itunesLink" [href]="video.itunesLink" target="_blank" class="platform-link itunes-link" (click)="$event.stopPropagation()">
+                        <span class="platform-logo">📱</span>
+                      </a>
+                      <a *ngIf="video.youtubeMusicLink" [href]="video.youtubeMusicLink" target="_blank" class="platform-link youtube-link" (click)="$event.stopPropagation()">
+                        <span class="platform-logo">▶️</span>
+                      </a>
+                      <a *ngIf="video.instagramLink" [href]="video.instagramLink" target="_blank" class="platform-link instagram-link" (click)="$event.stopPropagation()">
+                        <span class="platform-logo">📷</span>
+                      </a>
+                    </div>
+                  </div>
+                  
+                  <!-- Action Buttons -->
+                  <div class="video-actions" *ngIf="authService.isAuthenticated()">
+                    <button 
+                      class="action-btn like-btn" 
+                      [class.liked]="video.isLiked"
+                      (click)="$event.stopPropagation(); toggleLike(video)"
+                      title="{{ video.isLiked ? 'Unlike this video' : 'Like this video' }}">
+                      <span class="btn-text">{{ video.isLiked ? 'Liked' : 'Like' }}</span>
+                      <span class="like-count" *ngIf="video.likeCount > 0">{{ video.likeCount }}</span>
+                    </button>
+                    
+                    <button 
+                      class="action-btn favorite-btn" 
+                      [class.favorited]="video.isFavorited"
+                      (click)="$event.stopPropagation(); toggleFavorite(video)"
+                      title="{{ video.isFavorited ? 'Remove from favorites' : 'Add to favorites' }}">
+                      <span class="btn-text">{{ video.isFavorited ? 'Favorited' : 'Favorite' }}</span>
+                    </button>
+                    
+                    <button 
+                      class="action-btn unlike-btn" 
+                      (click)="$event.stopPropagation(); unlikeVideo(video.id)"
+                      title="Remove from liked videos">
+                      <span class="btn-text">Remove</span>
                     </button>
                   </div>
                 </div>
@@ -208,30 +317,140 @@
           <mat-icon>star</mat-icon>
           <span>Favorieten</span>
           <span class="tab-count">{{ favoriteVideos.length }}</span>
-        </ng-template>
-        <div class="tab-content">
+        </ng-template>        <div class="tab-content">
           <div class="videos-section" *ngIf="favoriteVideos.length > 0; else noFavoriteVideos">
-            <div class="videos-grid">              <div class="video-card" *ngFor="let video of favoriteVideos">
-                <div class="video-thumbnail" (click)="watchVideo(video.id)">
-                  <img [src]="video.coverImageUrl" [alt]="video.title" />
-                  <div class="video-overlay">
-                    <mat-icon class="play-btn">play_arrow</mat-icon>
+            <div class="videos-grid">              <div *ngFor="let video of favoriteVideos" class="video-card" (click)="playVideo(video)">
+                <!-- Video Thumbnail with 9:16 Aspect Ratio -->
+                <div class="video-thumbnail">
+                  <!-- Video Player (Hidden by default) -->
+                  <video 
+                    #videoPlayer
+                    *ngIf="playingVideoId === video.id && canWatchVideo(video)"
+                    [src]="getVideoUrl(video.videoUrl)" 
+                    class="video-player"
+                    controls
+                    autoplay
+                    (click)="$event.stopPropagation()"
+                    (play)="onVideoPlay(video)"
+                    (ended)="stopVideo()"
+                    (pause)="stopVideo()">
+                  </video>
+                  
+                  <!-- Stop Button Overlay for playing video -->
+                  <div *ngIf="playingVideoId === video.id" class="stop-overlay">
+                    <button class="stop-button" (click)="stopVideo(); $event.stopPropagation()">
+                      <mat-icon>stop</mat-icon>
+                    </button>
                   </div>
-                  <!-- <div class="video-duration">{{ formatDuration(video.duration) }}</div> -->
+                  
+                  <!-- Cover Image -->
+                  <img 
+                    *ngIf="playingVideoId !== video.id"
+                    [src]="getVideoThumbnail(video)" 
+                    [alt]="video.title"
+                    class="cover-image"
+                    (error)="onImageError($event)">
+                  
+                  <!-- Play Button Overlay -->
+                  <div *ngIf="playingVideoId !== video.id" class="play-overlay">
+                    <div class="play-button">
+                      <mat-icon>{{ canWatchVideo(video) ? 'play_arrow' : 'lock' }}</mat-icon>
+                    </div>
+                  </div>
+                  
+                  <!-- Premium Badge -->
+                  <div *ngIf="video.contentType === 'PREMIUM'" class="premium-badge">
+                    <mat-icon>star</mat-icon>
+                    <span>Premium</span>
+                  </div>
+                  
+                  <!-- Duration Badge -->
+                  <div *ngIf="video.duration" class="duration-badge">
+                    {{ formatDuration(video.duration) }}
+                  </div>
                 </div>
+
+                <!-- Video Info -->
                 <div class="video-info">
                   <h3 class="video-title">{{ video.title }}</h3>
-                  <p class="video-description">{{ video.description }}</p>
+                  <p class="video-description" *ngIf="video.description">{{ video.description }}</p>
+                  
                   <div class="video-meta">
-                    <span class="video-date">{{ video.createdAt | date:'dd MMM yyyy' }}</span>
-                    <button class="unfavorite-btn" (click)="removeFavorite(video.id)">
-                      <mat-icon>star</mat-icon>
+                    <span class="views">
+                      <span class="icon">👁️</span>
+                      {{ formatViews(video.viewCount || 0) }}
+                    </span>
+                    <span class="likes">
+                      <span class="icon">❤️</span>
+                      {{ video.likeCount || 0 }}
+                    </span>
+                    <span class="content-type" [class.premium]="video.contentType === 'PREMIUM'">
+                      <span class="icon">{{ video.contentType === 'PREMIUM' ? '⭐' : '🆓' }}</span>
+                      {{ video.contentType === 'PREMIUM' ? 'Premium' : 'Gratis' }}
+                    </span>
+                  </div>
+
+                  <!-- Hashtags -->
+                  <div class="hashtags" *ngIf="video.hashtags">
+                    <span class="hashtag" *ngFor="let tag of video.hashtags.split(',').slice(0, 3)">
+                      {{ tag.trim() }}
+                    </span>
+                  </div>
+
+                  <!-- External Links -->
+                  <div class="external-links" *ngIf="hasExternalLinks(video)">
+                    <div class="platform-links">
+                      <a *ngIf="video.spotifyLink" [href]="video.spotifyLink" target="_blank" class="platform-link spotify-link" (click)="$event.stopPropagation()">
+                        <span class="platform-logo">🎵</span>
+                      </a>
+                      <a *ngIf="video.amazonLink" [href]="video.amazonLink" target="_blank" class="platform-link amazon-link" (click)="$event.stopPropagation()">
+                        <span class="platform-logo">🛒</span>
+                      </a>
+                      <a *ngIf="video.appleMusicLink" [href]="video.appleMusicLink" target="_blank" class="platform-link apple-link" (click)="$event.stopPropagation()">
+                        <span class="platform-logo">🍎</span>
+                      </a>
+                      <a *ngIf="video.itunesLink" [href]="video.itunesLink" target="_blank" class="platform-link itunes-link" (click)="$event.stopPropagation()">
+                        <span class="platform-logo">📱</span>
+                      </a>
+                      <a *ngIf="video.youtubeMusicLink" [href]="video.youtubeMusicLink" target="_blank" class="platform-link youtube-link" (click)="$event.stopPropagation()">
+                        <span class="platform-logo">▶️</span>
+                      </a>
+                      <a *ngIf="video.instagramLink" [href]="video.instagramLink" target="_blank" class="platform-link instagram-link" (click)="$event.stopPropagation()">
+                        <span class="platform-logo">📷</span>
+                      </a>
+                    </div>
+                  </div>
+                  
+                  <!-- Action Buttons -->
+                  <div class="video-actions" *ngIf="authService.isAuthenticated()">
+                    <button 
+                      class="action-btn like-btn" 
+                      [class.liked]="video.isLiked"
+                      (click)="$event.stopPropagation(); toggleLike(video)"
+                      title="{{ video.isLiked ? 'Unlike this video' : 'Like this video' }}">
+                      <span class="btn-text">{{ video.isLiked ? 'Liked' : 'Like' }}</span>
+                      <span class="like-count" *ngIf="video.likeCount > 0">{{ video.likeCount }}</span>
+                    </button>
+                    
+                    <button 
+                      class="action-btn favorite-btn" 
+                      [class.favorited]="video.isFavorited"
+                      (click)="$event.stopPropagation(); toggleFavorite(video)"
+                      title="{{ video.isFavorited ? 'Remove from favorites' : 'Add to favorites' }}">
+                      <span class="btn-text">{{ video.isFavorited ? 'Favorited' : 'Favorite' }}</span>
+                    </button>
+                    
+                    <button 
+                      class="action-btn unfavorite-btn" 
+                      (click)="$event.stopPropagation(); removeFavorite(video.id)"
+                      title="Remove from favorites">
+                      <span class="btn-text">Remove</span>
                     </button>
                   </div>
                 </div>
               </div>
             </div>
-          </div>          <ng-template #noFavoriteVideos>
+          </div><ng-template #noFavoriteVideos>
             <div class="empty-state">
               <mat-icon>star_border</mat-icon>
               <h3>Geen favorieten</h3>
