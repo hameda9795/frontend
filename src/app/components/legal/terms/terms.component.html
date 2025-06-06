@@ -1,0 +1,256 @@
+<div class="terms-container">
+  <div class="terms-header">
+    <div class="header-content">
+      <button class="back-btn" routerLink="/home">
+        <mat-icon>arrow_back</mat-icon>
+        Terug naar Home
+      </button>
+      <h1>📄 Algemene Voorwaarden</h1>
+      <p class="subtitle">Voorwaarden voor het gebruik van Bitzomax</p>
+      <p class="last-updated">Laatst bijgewerkt: {{ lastUpdated | date:'d MMMM yyyy':'nl' }}</p>
+    </div>
+  </div>
+
+  <div class="terms-content">
+    <div class="content-wrapper">
+      
+      <!-- Introduction -->
+      <section class="terms-section">
+        <div class="section-icon">🎵</div>
+        <h2>Welkom bij Bitzomax</h2>
+        <p>
+          Deze algemene voorwaarden zijn van toepassing op het gebruik van Bitzomax, 
+          het Nederlandse platform voor muziekvideo's met liedteksten. Door gebruik te maken 
+          van onze diensten gaat u akkoord met deze voorwaarden.
+        </p>
+      </section>
+
+      <!-- Service Description -->
+      <section class="terms-section">
+        <div class="section-icon">🎬</div>
+        <h2>Onze dienstverlening</h2>
+        <div class="service-list">
+          <div class="service-item">
+            <mat-icon>play_circle</mat-icon>
+            <div class="service-content">
+              <h3>Video streaming</h3>
+              <p>Toegang tot een uitgebreide collectie Nederlandse en internationale muziekvideo's</p>
+            </div>
+          </div>
+          
+          <div class="service-item">
+            <mat-icon>lyrics</mat-icon>
+            <div class="service-content">
+              <h3>Liedteksten</h3>
+              <p>Visuele weergave van liedteksten geïntegreerd in video's</p>
+            </div>
+          </div>
+          
+          <div class="service-item">
+            <mat-icon>favorite</mat-icon>
+            <div class="service-content">
+              <h3>Persoonlijke ervaring</h3>
+              <p>Mogelijkheid om video's te liken, favorieten op te slaan en afspeellijsten te maken</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- User Obligations -->
+      <section class="terms-section">
+        <div class="section-icon">👤</div>
+        <h2>Uw verplichtingen als gebruiker</h2>
+        <div class="obligations-grid">
+          <div class="obligation-item">
+            <mat-icon>verified_user</mat-icon>
+            <h3>Correct gebruik</h3>
+            <p>Gebruik de service alleen voor persoonlijke, niet-commerciële doeleinden</p>
+          </div>
+          
+          <div class="obligation-item">
+            <mat-icon>account_circle</mat-icon>
+            <h3>Account verantwoordelijkheid</h3>
+            <p>Houd uw inloggegevens veilig en deel deze niet met anderen</p>
+          </div>
+          
+          <div class="obligation-item">
+            <mat-icon>gavel</mat-icon>  
+            <h3>Wetgeving</h3>
+            <p>Respecteer alle toepasselijke Nederlandse en internationale wetten</p>
+          </div>
+          
+          <div class="obligation-item">
+            <mat-icon>block</mat-icon>
+            <h3>Verboden activiteiten</h3>
+            <p>Geen misbruik, hacking, spam of andere schadelijke activiteiten</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Intellectual Property -->
+      <section class="terms-section">
+        <div class="section-icon">©️</div>
+        <h2>Intellectueel eigendom</h2>
+        <div class="ip-info">
+          <div class="ip-item">
+            <mat-icon>copyright</mat-icon>
+            <div class="ip-content">
+              <h3>Auteursrechten</h3>
+              <p>Alle content op Bitzomax is beschermd door auteursrecht. Video's, liedteksten en andere materialen zijn eigendom van hun respectievelijke rechthebbenden.</p>
+            </div>
+          </div>
+          
+          <div class="ip-item">
+            <mat-icon>download_off</mat-icon>
+            <div class="ip-content">
+              <h3>Gebruik beperkingen</h3>
+              <p>Het downloaden, kopiëren of heruitgeven van content is niet toegestaan zonder expliciete toestemming.</p>
+            </div>
+          </div>
+          
+          <div class="ip-item">
+            <mat-icon>report</mat-icon>
+            <div class="ip-content">
+              <h3>Schending melden</h3>
+              <p>Meld eventuele auteursrechtschendingen via ons contactformulier.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Service Availability -->
+      <section class="terms-section">
+        <div class="section-icon">⚡</div>
+        <h2>Beschikbaarheid van de service</h2>
+        <div class="availability-info">
+          <div class="availability-item">
+            <mat-icon>schedule</mat-icon>
+            <span><strong>24/7 toegang:</strong> Wij streven ernaar de service continu beschikbaar te houden</span>
+          </div>
+          <div class="availability-item">
+            <mat-icon>build</mat-icon>
+            <span><strong>Onderhoud:</strong> Periodiek onderhoud kan leiden tot tijdelijke onbeschikbaarheid</span>
+          </div>
+          <div class="availability-item">
+            <mat-icon>error_outline</mat-icon>
+            <span><strong>Storingen:</strong> Wij zijn niet aansprakelijk voor schade door technische storingen</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Privacy -->
+      <section class="terms-section">
+        <div class="section-icon">🔒</div>
+        <h2>Privacy en gegevensbescherming</h2>
+        <p>
+          Uw privacy is belangrijk voor ons. Voor informatie over hoe wij uw persoonlijke gegevens 
+          verzamelen, gebruiken en beschermen, verwijzen wij u naar ons 
+          <a routerLink="/privacy" class="privacy-link">privacybeleid</a>.
+        </p>
+        <div class="privacy-highlights">
+          <div class="privacy-highlight">
+            <mat-icon>shield</mat-icon>
+            <span>AVG-compliant gegevensbescherming</span>
+          </div>
+          <div class="privacy-highlight">
+            <mat-icon>visibility_off</mat-icon>
+            <span>Geen verkoop van persoonlijke gegevens</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Liability -->
+      <section class="terms-section">
+        <div class="section-icon">⚖️</div>
+        <h2>Aansprakelijkheid</h2>
+        <div class="liability-content">
+          <p>
+            Bitzomax streeft ernaar de best mogelijke service te bieden, maar kan niet garanderen 
+            dat de service altijd foutloos en ononderbroken beschikbaar is.
+          </p>
+          <ul class="liability-list">
+            <li>
+              <mat-icon>info</mat-icon>
+              <span>De service wordt geleverd "zoals het is" zonder garanties</span>
+            </li>
+            <li>
+              <mat-icon>warning</mat-icon>
+              <span>Bitzomax is niet aansprakelijk voor indirecte schade</span>
+            </li>
+            <li>
+              <mat-icon>euro_symbol</mat-icon>
+              <span>Eventuele aansprakelijkheid is beperkt tot het betaalde bedrag</span>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Termination -->
+      <section class="terms-section">
+        <div class="section-icon">🚫</div>
+        <h2>Beëindiging van het account</h2>
+        <div class="termination-info">
+          <div class="termination-item">
+            <mat-icon>person_off</mat-icon>  
+            <div class="termination-content">
+              <h3>Door gebruiker</h3>
+              <p>U kunt uw account op elk moment beëindigen via uw profielinstellingen</p>
+            </div>
+          </div>
+          
+          <div class="termination-item">
+            <mat-icon>admin_panel_settings</mat-icon>
+            <div class="termination-content">
+              <h3>Door Bitzomax</h3>
+              <p>Wij kunnen accounts opschorten of beëindigen bij schending van deze voorwaarden</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Changes -->
+      <section class="terms-section">
+        <div class="section-icon">🔄</div>
+        <h2>Wijzigingen in voorwaarden</h2>
+        <p>
+          Bitzomax behoudt zich het recht voor om deze algemene voorwaarden te wijzigen. 
+          Belangrijke wijzigingen worden u via e-mail of een melding op het platform bekendgemaakt.
+        </p>
+        <div class="changes-info">
+          <mat-icon>notifications</mat-icon>
+          <span>U wordt minimaal 30 dagen van tevoren op de hoogte gesteld van wijzigingen</span>
+        </div>
+      </section>
+
+      <!-- Applicable Law -->
+      <section class="terms-section">
+        <div class="section-icon">🇳🇱</div>
+        <h2>Toepasselijk recht</h2>
+        <p>
+          Op deze algemene voorwaarden is Nederlands recht van toepassing. 
+          Geschillen worden voorgelegd aan de bevoegde Nederlandse rechter.
+        </p>
+      </section>
+
+      <!-- Contact -->
+      <section class="terms-section highlight">
+        <div class="section-icon">📧</div>
+        <h2>Vragen over deze voorwaarden?</h2>
+        <p>
+          Heeft u vragen over deze algemene voorwaarden? 
+          Neem dan contact met ons op.
+        </p>
+        <div class="contact-actions">
+          <button class="contact-btn" routerLink="/contact">
+            <mat-icon>email</mat-icon>
+            Contact opnemen
+          </button>          <div class="contact-info">
+            <mat-icon>email</mat-icon>
+            <span>legal&#64;bitzomax.nl</span>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</div>

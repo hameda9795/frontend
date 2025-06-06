@@ -1,0 +1,249 @@
+<div class="contact-container">
+  <div class="contact-header">
+    <div class="header-content">
+      <button class="back-btn" routerLink="/home">
+        <mat-icon>arrow_back</mat-icon>
+        Terug naar Home
+      </button>
+      <h1>📞 Contact</h1>
+      <p class="subtitle">Neem contact op met het Bitzomax team</p>
+    </div>
+  </div>
+
+  <div class="contact-content">
+    <div class="content-wrapper">
+      
+      <!-- Contact Options -->
+      <div class="contact-grid">
+        
+        <!-- Contact Form -->
+        <div class="contact-form-section">
+          <div class="form-card">
+            <div class="card-header">
+              <div class="section-icon">✉️</div>
+              <h2>Stuur ons een bericht</h2>
+              <p>Vul het formulier in en wij nemen zo snel mogelijk contact met u op</p>
+            </div>
+              <div class="card-content" *ngIf="!isSubmitted">
+              <form [formGroup]="contactForm" (ngSubmit)="onSubmit()" class="contact-form">
+                
+                <div class="form-group">
+                  <label for="name">Voor- en achternaam *</label>
+                  <input type="text" 
+                         id="name"
+                         formControlName="name" 
+                         placeholder="Jan Jansen"
+                         [class.error]="contactForm.get('name')?.invalid && contactForm.get('name')?.touched">
+                  <div class="error-message" *ngIf="contactForm.get('name')?.hasError('required') && contactForm.get('name')?.touched">
+                    ❌ Naam is verplicht
+                  </div>
+                  <div class="error-message" *ngIf="contactForm.get('name')?.hasError('minlength') && contactForm.get('name')?.touched">
+                    ❌ Naam moet minimaal 2 karakters bevatten
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="email">E-mailadres *</label>
+                  <input type="email" 
+                         id="email"
+                         formControlName="email" 
+                         placeholder="jan@voorbeeld.nl"
+                         [class.error]="contactForm.get('email')?.invalid && contactForm.get('email')?.touched">
+                  <div class="error-message" *ngIf="contactForm.get('email')?.hasError('required') && contactForm.get('email')?.touched">
+                    ❌ E-mailadres is verplicht
+                  </div>
+                  <div class="error-message" *ngIf="contactForm.get('email')?.hasError('email') && contactForm.get('email')?.touched">
+                    ❌ Voer een geldig e-mailadres in
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="reason">Onderwerp *</label>
+                  <select id="reason" 
+                          formControlName="reason"
+                          [class.error]="contactForm.get('reason')?.invalid && contactForm.get('reason')?.touched">
+                    <option value="">Selecteer een onderwerp</option>
+                    <option *ngFor="let reason of contactReasons" [value]="reason.value">
+                      {{ reason.label }}
+                    </option>
+                  </select>
+                  <div class="error-message" *ngIf="contactForm.get('reason')?.hasError('required') && contactForm.get('reason')?.touched">
+                    ❌ Selecteer een onderwerp
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="subject">Betreft *</label>
+                  <input type="text" 
+                         id="subject"
+                         formControlName="subject" 
+                         placeholder="Korte samenvatting van uw vraag"
+                         [class.error]="contactForm.get('subject')?.invalid && contactForm.get('subject')?.touched">
+                  <div class="error-message" *ngIf="contactForm.get('subject')?.hasError('required') && contactForm.get('subject')?.touched">
+                    ❌ Betreft is verplicht
+                  </div>
+                  <div class="error-message" *ngIf="contactForm.get('subject')?.hasError('minlength') && contactForm.get('subject')?.touched">
+                    ❌ Betreft moet minimaal 5 karakters bevatten
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="message">Bericht *</label>
+                  <textarea id="message" 
+                            formControlName="message" 
+                            rows="5"
+                            placeholder="Beschrijf uw vraag of opmerking in detail..."
+                            [class.error]="contactForm.get('message')?.invalid && contactForm.get('message')?.touched"></textarea>
+                  <div class="error-message" *ngIf="contactForm.get('message')?.hasError('required') && contactForm.get('message')?.touched">
+                    ❌ Bericht is verplicht
+                  </div>                  <div class="error-message" *ngIf="contactForm.get('message')?.hasError('minlength') && contactForm.get('message')?.touched">
+                    ❌ Bericht moet minimaal 20 karakters bevatten
+                  </div>
+                </div>
+
+                <div class="form-actions">
+                  <button type="submit" 
+                          class="submit-btn"
+                          [disabled]="isSubmitting">
+                    <mat-icon *ngIf="!isSubmitting">send</mat-icon>
+                    <mat-icon *ngIf="isSubmitting" class="spinning">hourglass_empty</mat-icon>
+                    {{ isSubmitting ? 'Verzenden...' : 'Bericht versturen' }}
+                  </button>
+                </div>
+
+              </form>
+            </div>
+
+            <!-- Success Message -->
+            <div class="success-message" *ngIf="isSubmitted">
+              <div class="success-icon">✅</div>
+              <h3>Bericht verzonden!</h3>
+              <p>Bedankt voor uw bericht. Wij nemen binnen 24 uur contact met u op.</p>
+              <button class="new-message-btn" (click)="resetForm()">
+                <mat-icon>add</mat-icon>
+                Nieuw bericht versturen
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contact Information -->
+        <div class="contact-info-section">
+          
+          <!-- Direct Contact -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="section-icon">📧</div>
+              <h3>Direct contact</h3>
+            </div>
+            <div class="contact-methods">
+              <div class="contact-method">
+                <mat-icon>email</mat-icon>                <div class="method-content">
+                  <h4>E-mail</h4>
+                  <p>info&#64;bitzomax.nl</p>
+                  <span class="response-time">Reactie binnen 24 uur</span>
+                </div>
+              </div>
+              
+              <div class="contact-method">
+                <mat-icon>support</mat-icon>                <div class="method-content">
+                  <h4>Technische ondersteuning</h4>
+                  <p>support&#64;bitzomax.nl</p>
+                  <span class="response-time">Reactie binnen 4 uur</span>
+                </div>
+              </div>
+              
+              <div class="contact-method">
+                <mat-icon>gavel</mat-icon>                <div class="method-content">
+                  <h4>Juridische zaken</h4>
+                  <p>legal&#64;bitzomax.nl</p>
+                  <span class="response-time">Reactie binnen 48 uur</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- FAQ -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="section-icon">❓</div>
+              <h3>Veelgestelde vragen</h3>
+            </div>
+            <div class="faq-list">
+              <div class="faq-item">
+                <h4>Hoe kan ik mijn wachtwoord resetten?</h4>
+                <p>Klik op "Wachtwoord vergeten" op de inlogpagina en volg de instructies.</p>
+              </div>
+              
+              <div class="faq-item">
+                <h4>Kan ik video's downloaden?</h4>
+                <p>Nee, alle content is alleen beschikbaar voor streaming om auteursrechten te respecteren.</p>
+              </div>
+              
+              <div class="faq-item">
+                <h4>Hoe kan ik content suggereren?</h4>
+                <p>Gebruik het contactformulier met onderwerp "Content suggestie" en beschrijf uw wens.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Office Info -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="section-icon">🏢</div>
+              <h3>Over Bitzomax</h3>
+            </div>
+            <div class="office-info">
+              <div class="office-detail">
+                <mat-icon>location_on</mat-icon>
+                <div>
+                  <h4>Locatie</h4>
+                  <p>Amsterdam, Nederland</p>
+                </div>
+              </div>
+              
+              <div class="office-detail">
+                <mat-icon>language</mat-icon>
+                <div>
+                  <h4>Talen</h4>
+                  <p>Nederlands, Engels</p>
+                </div>
+              </div>
+              
+              <div class="office-detail">
+                <mat-icon>schedule</mat-icon>
+                <div>
+                  <h4>Reactietijd</h4>
+                  <p>Ma-Vr: 4-24 uur<br>Weekend: 24-48 uur</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Social Links -->
+          <div class="info-card social-card">
+            <div class="card-header">
+              <div class="section-icon">🌐</div>
+              <h3>Volg ons</h3>
+            </div>
+            <div class="social-links">
+              <a href="#" class="social-link">
+                <mat-icon>facebook</mat-icon>
+                <span>Facebook</span>
+              </a>
+              <a href="#" class="social-link">
+                <mat-icon>alternate_email</mat-icon>
+                <span>Twitter</span>
+              </a>
+              <a href="#" class="social-link">
+                <mat-icon>camera_alt</mat-icon>
+                <span>Instagram</span>
+              </a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
