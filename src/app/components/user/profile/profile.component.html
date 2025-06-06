@@ -123,9 +123,8 @@
         <div class="video-info">
           <h3 class="video-title">{{ video.title }}</h3>
           <p class="video-description" *ngIf="video.description">{{ video.description }}</p>
-          
-          <div class="video-meta">
-            <span class="views">👁️ {{ video.viewCount || 0 }}</span>
+            <div class="video-meta">
+            <span class="views">👁️ {{ formatViews(video.viewCount || 0) }}</span>
             <span class="likes">❤️ {{ video.likeCount || 0 }}</span>
           </div>
 
@@ -186,15 +185,14 @@
         <div class="video-info">
           <h3 class="video-title">{{ video.title }}</h3>
           <p class="video-description" *ngIf="video.description">{{ video.description }}</p>
-          
-          <div class="video-meta">
-            <span class="views">👁️ {{ video.viewCount || 0 }}</span>
+            <div class="video-meta">
+            <span class="views">👁️ {{ formatViews(video.viewCount || 0) }}</span>
             <span class="likes">❤️ {{ video.likeCount || 0 }}</span>
           </div>
 
           <!-- Action Buttons -->
           <div class="video-actions">
-            <button 
+            <button
               class="action-btn like-btn" 
               [class.liked]="video.isLiked"
               (click)="toggleLike(video); $event.stopPropagation()"

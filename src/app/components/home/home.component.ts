@@ -22,12 +22,12 @@ import { AuthService } from '../../services/auth.service';
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
 })
-export class HomeComponent implements OnInit {
-  videos: any[] = [];
+export class HomeComponent implements OnInit {  videos: any[] = [];
   loading = true;
   error = '';
   selectedCategory = 'all';
   playingVideoId: number | null = null;
+  viewIncrementedVideos: Set<number> = new Set(); // Track which videos have had their view count incremented
   categories = [
     { value: 'all', label: 'Alle video\'s' },
     { value: 'free', label: 'Gratis' },
@@ -81,7 +81,6 @@ export class HomeComponent implements OnInit {
   getVideoUrl(videoUrl: string): string {
     return this.videoService.getVideoUrl(videoUrl);
   }
-
   playVideo(video: any): void {
     if (!this.canWatchVideo(video)) {
       // Handle premium content or navigate to login
@@ -93,21 +92,33 @@ export class HomeComponent implements OnInit {
     } else {
       this.stopVideo(); // Stop any currently playing video
       this.playingVideoId = video.id;
-      
-      // Increment view count
-      this.videoService.incrementView(video.id).subscribe({
-        next: (updatedVideo) => {
-          // Update the video in the array with new view count
-          const index = this.videos.findIndex(v => v.id === video.id);
-          if (index !== -1) {
-            this.videos[index].viewCount = updatedVideo.viewCount;
-          }
-        },
-        error: (error) => {
-          console.error('Error incrementing view:', error);
-        }
-      });
+      // Note: View increment is now handled when video actually starts playing
     }
+  }
+  onVideoPlay(video: any): void {
+    // Only increment view count once per video session
+    if (this.viewIncrementedVideos.has(video.id)) {
+      return;
+    }
+    
+    this.viewIncrementedVideos.add(video.id);
+    
+    // Increment view count when video actually starts playing
+    this.videoService.incrementView(video.id).subscribe({
+      next: (updatedVideo) => {
+        // Update the video in the array with new view count
+        const index = this.videos.findIndex(v => v.id === video.id);
+        if (index !== -1) {
+          this.videos[index].viewCount = updatedVideo.viewCount;
+        }
+      },
+      error: (error) => {
+        console.error('Error incrementing view:', error);
+        // Remove from tracked set on error so it can be retried
+        this.viewIncrementedVideos.delete(video.id);
+        // Error is handled gracefully - view increment failure doesn't break video playback
+      }
+    });
   }
 
   stopVideo(): void {

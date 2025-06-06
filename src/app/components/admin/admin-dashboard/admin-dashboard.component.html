@@ -22,9 +22,8 @@
     <div class="stat-card">
       <div class="stat-number">{{ getPremiumVideosCount() }}</div>
       <div class="stat-label">Premium Video's</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-number">{{ getTotalViews() }}</div>
+    </div>    <div class="stat-card">
+      <div class="stat-number">{{ formatViews(getTotalViews()) }}</div>
       <div class="stat-label">Totaal Weergaven</div>
     </div>
   </div>
@@ -54,9 +53,8 @@
         <div class="video-info">
           <h3 class="video-title">{{ video.title }}</h3>
           <p class="video-description">{{ video.description || 'Geen beschrijving' }}</p>
-          
-          <div class="video-stats">
-            <span class="stat">👁️ {{ video.viewCount }}</span>
+            <div class="video-stats">
+            <span class="stat">👁️ {{ formatViews(video.viewCount) }}</span>
             <span class="stat">❤️ {{ video.likeCount }}</span>
           </div>
           

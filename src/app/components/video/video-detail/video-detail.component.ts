@@ -16,6 +16,8 @@ export class VideoDetailComponent implements OnInit {
   loading = true;
   error = '';
   canWatch = false;
+  hasViewBeenIncremented = false;
+  
   constructor(
     private route: ActivatedRoute,
     public router: Router,
@@ -31,14 +33,12 @@ export class VideoDetailComponent implements OnInit {
       }
     });
   }
-
   loadVideo(id: number): void {
     this.loading = true;
     this.videoService.getVideo(id).subscribe({
       next: (video: Video) => {
         this.video = video;
         this.canWatch = this.checkCanWatch(video);
-        this.incrementView(id);
         this.loading = false;
       },
       error: (error: any) => {
@@ -53,9 +53,9 @@ export class VideoDetailComponent implements OnInit {
     if (video.contentType === 'FREE') return true;
     return this.authService.isAuthenticated() && this.authService.getCurrentUser()?.premium;
   }
-
   incrementView(id: number): void {
-    if (this.canWatch) {
+    if (this.canWatch && !this.hasViewBeenIncremented) {
+      this.hasViewBeenIncremented = true;
       this.videoService.incrementView(id).subscribe({
         next: (updatedVideo: Video) => {
           if (this.video) {
@@ -64,10 +64,27 @@ export class VideoDetailComponent implements OnInit {
         },
         error: (error: any) => {
           console.error('Error incrementing view:', error);
+          this.hasViewBeenIncremented = false; // Reset flag on error
         }
       });
     }
   }
+
+  onVideoPlay(): void {
+    if (this.video) {
+      this.incrementView(this.video.id);
+    }
+  }
+
+  formatViews(views: number): string {
+    if (views >= 1000000) {
+      return (views / 1000000).toFixed(1) + 'M';
+    } else if (views >= 1000) {
+      return (views / 1000).toFixed(1) + 'K';
+    }
+    return views.toString();
+  }
+
   toggleLike(): void {
     if (!this.authService.isAuthenticated()) {
       this.router.navigate(['/login']);

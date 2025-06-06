@@ -6,13 +6,13 @@
   </div>
 
   <div class="video-content">
-    <div class="video-player-section">
-      <div class="video-wrapper" *ngIf="canWatch">
+    <div class="video-player-section">      <div class="video-wrapper" *ngIf="canWatch">
         <video 
           [src]="getVideoUrl()" 
           controls 
           class="video-player"
-          [poster]="getCoverImageUrl()">
+          [poster]="getCoverImageUrl()"
+          (play)="onVideoPlay()">
           Je browser ondersteunt geen video.
         </video>
       </div>
@@ -26,14 +26,12 @@
           </button>
         </div>
       </div>
-    </div>
-
-    <div class="video-info">
+    </div>    <div class="video-info">
       <h1 class="video-title">{{ video.title }}</h1>
       
       <div class="video-stats">
         <span class="stat">
-          👁️ {{ video.viewCount }} weergaven
+          👁️ {{ formatViews(video.viewCount) }} weergaven
         </span>
         <span class="stat">
           ❤️ {{ video.likeCount }} likes
@@ -41,7 +39,9 @@
         <span class="content-type" [class.premium]="video.contentType === 'PREMIUM'">
           {{ video.contentType === 'FREE' ? 'Gratis' : 'Premium' }}
         </span>
-      </div>      <div class="video-actions" *ngIf="authService.isAuthenticated()">
+      </div>
+
+      <div class="video-actions" *ngIf="authService.isAuthenticated()">
         <button 
           class="btn btn-like" 
           [class.liked]="video.isLiked"

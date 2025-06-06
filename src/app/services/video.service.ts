@@ -135,10 +135,13 @@ export class VideoService {
 
   getPopularVideos(): Observable<Video[]> {
     return this.http.get<Video[]>(`${this.apiUrl}/popular`);
-  }
-
-  incrementView(id: number): Observable<Video> {
-    return this.http.post<Video>(`${this.apiUrl}/${id}/view`, {});
+  }  incrementView(id: number): Observable<Video> {
+    // Only include auth headers if user is authenticated
+    const options = this.authService.isAuthenticated() ? {
+      headers: this.authService.getAuthHeaders()
+    } : {};
+    
+    return this.http.post<Video>(`${this.apiUrl}/${id}/view`, {}, options);
   }
 
   toggleLike(id: number): Observable<Video> {

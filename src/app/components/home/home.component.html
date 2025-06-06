@@ -109,8 +109,7 @@
       <div *ngFor="let video of videos" class="video-card" (click)="playVideo(video)">
         <!-- Video Thumbnail with 9:16 Aspect Ratio -->
         <div class="video-thumbnail">
-          <!-- Video Player (Hidden by default) -->
-          <video 
+          <!-- Video Player (Hidden by default) -->          <video 
             #videoPlayer
             *ngIf="playingVideoId === video.id && canWatchVideo(video)"
             [src]="getVideoUrl(video.videoUrl)" 
@@ -118,6 +117,7 @@
             controls
             autoplay
             (click)="$event.stopPropagation()"
+            (play)="onVideoPlay(video)"
             (ended)="stopVideo()">
           </video>
           
@@ -151,10 +151,10 @@
         <!-- Video Info -->
         <div class="video-info">
           <h3 class="video-title">{{ video.title }}</h3>
-          <p class="video-description" *ngIf="video.description">{{ video.description }}</p>            <div class="video-meta">
+          <p class="video-description" *ngIf="video.description">{{ video.description }}</p>          <div class="video-meta">
             <span class="views">
               <span class="icon">👁️</span>
-              {{ video.viewCount || 0 }}
+              {{ formatViews(video.viewCount || 0) }}
             </span>
             <span class="likes">
               <span class="icon">❤️</span>
@@ -164,7 +164,7 @@
               <span class="icon">{{ video.contentType === 'PREMIUM' ? '⭐' : '🆓' }}</span>
               {{ video.contentType === 'PREMIUM' ? 'Premium' : 'Gratis' }}
             </span>
-          </div>          <!-- Hashtags -->
+          </div><!-- Hashtags -->
           <div class="hashtags" *ngIf="video.hashtags">
             <span class="hashtag" *ngFor="let tag of video.hashtags.split(',').slice(0, 3)">
               {{ tag.trim() }}
