@@ -1,0 +1,362 @@
+// Registration Prompt Modal - Beautiful Modern Design
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: var(--space-lg);
+  animation: fadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.modal-container {
+  background: var(--bg-card);
+  border-radius: var(--radius-2xl);
+  padding: 0;
+  max-width: 500px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 
+    0 25px 50px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(148, 163, 184, 0.1);
+  animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  // Animated border glow
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    background: linear-gradient(135deg, #8b5cf6 0%, #06b6d4 50%, #ec4899 100%);
+    border-radius: var(--radius-2xl);
+    z-index: -1;
+    opacity: 0.3;
+    animation: borderGlow 3s ease-in-out infinite alternate;
+  }
+}
+
+.modal-header {
+  position: relative;
+  padding: var(--space-lg) var(--space-xl) 0;
+  
+  .close-button {
+    position: absolute;
+    top: var(--space-md);
+    right: var(--space-md);
+    background: rgba(148, 163, 184, 0.1);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    border-radius: var(--radius-full);
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: all var(--transition-normal);
+    
+    &:hover {
+      background: rgba(239, 68, 68, 0.1);
+      border-color: rgba(239, 68, 68, 0.3);
+      color: var(--error-color);
+      transform: scale(1.1);
+    }
+    
+    mat-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+    }
+  }
+}
+
+.modal-content {
+  padding: var(--space-lg) var(--space-xl) var(--space-xl);
+  text-align: center;
+}
+
+.icon-container {
+  position: relative;
+  margin: 0 auto var(--space-xl);
+  width: 120px;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  .music-icon {
+    font-size: 4rem;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: pulse 2s ease-in-out infinite;
+    filter: drop-shadow(0 0 20px rgba(139, 92, 246, 0.3));
+  }
+  
+  .sparkle-effect {
+    position: absolute;
+    inset: 0;
+    
+    .sparkle {
+      position: absolute;
+      font-size: 1.5rem;
+      animation: sparkle 3s ease-in-out infinite;
+      
+      &.sparkle-1 {
+        top: 10%;
+        right: 20%;
+        animation-delay: 0s;
+      }
+      
+      &.sparkle-2 {
+        bottom: 15%;
+        left: 15%;
+        animation-delay: 1s;
+      }
+      
+      &.sparkle-3 {
+        top: 20%;
+        left: 10%;
+        animation-delay: 2s;
+      }
+    }
+  }
+}
+
+.modal-title {
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  margin-bottom: var(--space-md);
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.2;
+}
+
+.modal-description {
+  font-size: var(--font-size-base);
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: var(--space-xl);
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.features-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  margin-bottom: var(--space-2xl);
+  text-align: left;
+  
+  .feature {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    padding: var(--space-md);
+    background: rgba(139, 92, 246, 0.05);
+    border: 1px solid rgba(139, 92, 246, 0.1);
+    border-radius: var(--radius-lg);
+    transition: all var(--transition-normal);
+    
+    &:hover {
+      background: rgba(139, 92, 246, 0.1);
+      border-color: rgba(139, 92, 246, 0.2);
+      transform: translateX(5px);
+    }
+    
+    .feature-icon {
+      color: var(--primary-color);
+      font-size: 1.5rem;
+      width: 1.5rem;
+      height: 1.5rem;
+      flex-shrink: 0;
+    }
+    
+    span {
+      font-weight: 500;
+      color: var(--text-primary);
+      font-size: var(--font-size-sm);
+    }
+  }
+}
+
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  
+  .register-button {
+    background: var(--gradient-primary) !important;
+    color: white !important;
+    border: none !important;
+    padding: var(--space-md) var(--space-xl) !important;
+    border-radius: var(--radius-xl) !important;
+    font-weight: 600 !important;
+    font-size: var(--font-size-base) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: var(--space-sm) !important;
+    transition: all var(--transition-normal) !important;
+    box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3) !important;
+    position: relative;
+    overflow: hidden;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), transparent);
+      opacity: 0;
+      transition: opacity var(--transition-normal);
+    }
+    
+    &:hover {
+      transform: translateY(-2px) !important;
+      box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4) !important;
+      
+      &::before {
+        opacity: 1;
+      }
+    }
+    
+    &:active {
+      transform: translateY(0) !important;
+    }
+    
+    mat-icon {
+      font-size: 1.25rem;
+      width: 1.25rem;
+      height: 1.25rem;
+    }
+  }
+  
+  .login-button {
+    color: var(--text-primary) !important;
+    border-color: rgba(148, 163, 184, 0.3) !important;
+    padding: var(--space-md) var(--space-xl) !important;
+    border-radius: var(--radius-xl) !important;
+    font-weight: 500 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: var(--space-sm) !important;
+    transition: all var(--transition-normal) !important;
+    background: rgba(148, 163, 184, 0.05) !important;
+    
+    &:hover {
+      background: rgba(148, 163, 184, 0.1) !important;
+      border-color: rgba(148, 163, 184, 0.5) !important;
+      transform: translateY(-1px) !important;
+    }
+    
+    mat-icon {
+      font-size: 1.25rem;
+      width: 1.25rem;
+      height: 1.25rem;
+    }
+  }
+}
+
+// Animations
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+@keyframes sparkle {
+  0%, 100% {
+    opacity: 0;
+    transform: scale(0.5) rotate(0deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1) rotate(180deg);
+  }
+}
+
+@keyframes borderGlow {
+  0% {
+    opacity: 0.3;
+  }
+  100% {
+    opacity: 0.6;
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 767px) {
+  .modal-backdrop {
+    padding: var(--space-md);
+  }
+  
+  .modal-container {
+    max-width: 100%;
+    border-radius: var(--radius-xl);
+  }
+  
+  .modal-content {
+    padding: var(--space-lg) var(--space-lg) var(--space-xl);
+  }
+  
+  .modal-title {
+    font-size: var(--font-size-xl);
+  }
+  
+  .action-buttons {
+    .register-button,
+    .login-button {
+      padding: var(--space-md) var(--space-lg) !important;
+    }
+  }
+  
+  .features-list {
+    .feature {
+      padding: var(--space-sm) var(--space-md);
+      
+      .feature-icon {
+        font-size: 1.25rem;
+        width: 1.25rem;
+        height: 1.25rem;
+      }
+    }
+  }
+}

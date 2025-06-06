@@ -1,0 +1,65 @@
+<div class="modal-backdrop" (click)="onBackdropClick($event)">
+  <div class="modal-container">
+    <div class="modal-header">
+      <button class="close-button" (click)="onClose()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+    
+    <div class="modal-content">
+      <div class="icon-container">
+        <div class="music-icon">🎵</div>
+        <div class="sparkle-effect">
+          <div class="sparkle sparkle-1">✨</div>
+          <div class="sparkle sparkle-2">⭐</div>
+          <div class="sparkle sparkle-3">✨</div>
+        </div>
+      </div>
+      
+      <h2 class="modal-title">Ontdek Geweldige Content!</h2>
+      
+      <p class="modal-description">
+        Om video's te bekijken en te genieten van onze geweldige muziekcollectie, 
+        moet je eerst een gratis account aanmaken bij Bitzomax.
+      </p>
+      
+      <div class="features-list">
+        <div class="feature">
+          <mat-icon class="feature-icon">play_circle_filled</mat-icon>
+          <span>Onbeperkt video's afspelen</span>
+        </div>
+        <div class="feature">
+          <mat-icon class="feature-icon">favorite</mat-icon>
+          <span>Je favoriete content opslaan</span>
+        </div>
+        <div class="feature">
+          <mat-icon class="feature-icon">star</mat-icon>
+          <span>Toegang tot premium content</span>
+        </div>
+        <div class="feature">
+          <mat-icon class="feature-icon">phone</mat-icon>
+          <span>Overal toegang op al je apparaten</span>
+        </div>
+      </div>
+      
+      <div class="action-buttons">
+        <button 
+          mat-raised-button 
+          color="primary" 
+          class="register-button"
+          (click)="onRegister()">
+          <mat-icon>person_add</mat-icon>
+          Gratis Registreren
+        </button>
+        
+        <button 
+          mat-stroked-button 
+          class="login-button"
+          (click)="onLogin()">
+          <mat-icon>login</mat-icon>
+          Al een account? Inloggen
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

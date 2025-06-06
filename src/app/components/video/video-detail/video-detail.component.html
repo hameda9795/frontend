@@ -105,3 +105,9 @@
   <h2>{{ error }}</h2>
   <button class="btn btn-primary" (click)="goBack()">Terug naar overzicht</button>
 </div>
+
+<!-- Registration Prompt Modal -->
+<app-registration-prompt 
+  *ngIf="showRegistrationPrompt"
+  (closeModal)="closeRegistrationPrompt()">
+</app-registration-prompt>

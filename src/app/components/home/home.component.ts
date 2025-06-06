@@ -7,6 +7,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { RouterModule } from '@angular/router';
 import { VideoService } from '../../services/video.service';
 import { AuthService } from '../../services/auth.service';
+import { RegistrationPromptComponent } from '../auth/registration-prompt/registration-prompt.component';
 
 @Component({
   selector: 'app-home',
@@ -17,17 +18,20 @@ import { AuthService } from '../../services/auth.service';
     MatButtonModule,
     MatIconModule,
     MatChipsModule,
-    RouterModule
+    RouterModule,
+    RegistrationPromptComponent
   ],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
 })
-export class HomeComponent implements OnInit {  videos: any[] = [];
+export class HomeComponent implements OnInit {
+  videos: any[] = [];
   loading = true;
   error = '';
   selectedCategory = 'all';
   playingVideoId: number | null = null;
   viewIncrementedVideos: Set<number> = new Set(); // Track which videos have had their view count incremented
+  showRegistrationPrompt = false;
   categories = [
     { value: 'all', label: 'Alle video\'s' },
     { value: 'free', label: 'Gratis' },
@@ -80,8 +84,14 @@ export class HomeComponent implements OnInit {  videos: any[] = [];
 
   getVideoUrl(videoUrl: string): string {
     return this.videoService.getVideoUrl(videoUrl);
-  }
-  playVideo(video: any): void {
+  }  playVideo(video: any): void {
+    // Check if user is authenticated first
+    if (!this.authService.isAuthenticated()) {
+      this.showRegistrationPrompt = true;
+      return;
+    }
+
+    // Check if user can watch the video (premium content)
     if (!this.canWatchVideo(video)) {
       // Handle premium content or navigate to login
       return;
@@ -120,9 +130,12 @@ export class HomeComponent implements OnInit {  videos: any[] = [];
       }
     });
   }
-
   stopVideo(): void {
     this.playingVideoId = null;
+  }
+
+  closeRegistrationPrompt(): void {
+    this.showRegistrationPrompt = false;
   }
   onImageError(event: any): void {
     event.target.src = 'assets/images/default-thumbnail.svg';

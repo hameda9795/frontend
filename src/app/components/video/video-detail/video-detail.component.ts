@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { VideoService, Video } from '../../../services/video.service';
 import { AuthService } from '../../../services/auth.service';
+import { RegistrationPromptComponent } from '../../auth/registration-prompt/registration-prompt.component';
 
 @Component({
   selector: 'app-video-detail',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RegistrationPromptComponent],
   templateUrl: './video-detail.component.html',
   styleUrls: ['./video-detail.component.scss']
 })
@@ -17,6 +18,7 @@ export class VideoDetailComponent implements OnInit {
   error = '';
   canWatch = false;
   hasViewBeenIncremented = false;
+  showRegistrationPrompt = false;
   
   constructor(
     private route: ActivatedRoute,
@@ -48,8 +50,14 @@ export class VideoDetailComponent implements OnInit {
       }
     });
   }
-
   checkCanWatch(video: Video): boolean {
+    // First check if user is authenticated
+    if (!this.authService.isAuthenticated()) {
+      this.showRegistrationPrompt = true;
+      return false;
+    }
+    
+    // Then check premium content access
     if (video.contentType === 'FREE') return true;
     return this.authService.isAuthenticated() && this.authService.getCurrentUser()?.premium;
   }
@@ -136,8 +144,11 @@ export class VideoDetailComponent implements OnInit {
   getCoverImageUrl(): string {
     return this.video ? this.videoService.getCoverImageUrl(this.video.coverImageUrl) : '';
   }
-
   goBack(): void {
     this.router.navigate(['/home']);
+  }
+
+  closeRegistrationPrompt(): void {
+    this.showRegistrationPrompt = false;
   }
 }

@@ -200,7 +200,12 @@
   <!-- Empty State -->
   <div *ngIf="!loading && !error && videos.length === 0" class="empty-state">
     <mat-icon class="empty-icon">video_library</mat-icon>
-    <h2>Geen video's gevonden</h2>
-    <p>Er zijn momenteel geen video's beschikbaar in deze categorie.</p>
+    <h2>Geen video's gevonden</h2>    <p>Er zijn momenteel geen video's beschikbaar in deze categorie.</p>
   </div>
+
+  <!-- Registration Prompt Modal -->
+  <app-registration-prompt 
+    *ngIf="showRegistrationPrompt"
+    (closeModal)="closeRegistrationPrompt()">
+  </app-registration-prompt>
 </div>
