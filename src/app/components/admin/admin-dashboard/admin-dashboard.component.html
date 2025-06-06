@@ -9,8 +9,7 @@
         👤 Terug naar Profiel
       </a>
     </div>
-  </div>
-  <!-- Navigation Tabs -->
+  </div>  <!-- Navigation Tabs -->
   <div class="tab-navigation">
     <button 
       class="tab-button" 
@@ -32,6 +31,14 @@
       (click)="setActiveTab('users')">
       <i class="fas fa-users"></i>
       👥 Gebruikers
+    </button>
+    <button 
+      class="tab-button" 
+      [class.active]="activeTab === 'messages'"
+      (click)="setActiveTab('messages')">
+      <i class="fas fa-envelope"></i>
+      📧 Berichten
+      <span class="badge" *ngIf="unreadMessagesCount > 0">{{ unreadMessagesCount }}</span>
     </button>
   </div>
   <!-- Overview Tab -->
@@ -299,9 +306,7 @@
             </div>
           </div>
         </div>
-      </div>
-
-      <div class="empty-state" *ngIf="!loadingUsers && !userError && users.length === 0">
+      </div>      <div class="empty-state" *ngIf="!loadingUsers && !userError && users.length === 0">
         <h3>Geen gebruikers gevonden</h3>
         <p>Er zijn nog geen gebruikers geregistreerd.</p>
         <button class="btn btn-primary" (click)="toggleAddUserForm()">
@@ -309,5 +314,161 @@
         </button>
       </div>
     </div>
+  </div>
+  <!-- Messages Tab -->
+  <div class="tab-content" *ngIf="activeTab === 'messages'">
+    <div class="messages-section">
+      <div class="section-header">
+        <h1 class="section-title">📧 Berichten beheren</h1>
+        <p class="section-subtitle">Beheer klantberichten en communicatie</p>
+      </div>
+      
+      <div class="messages-controls">
+        <div class="search-filter-group">
+          <input 
+            type="text" 
+            class="search-input"            placeholder="🔍 Zoek in berichten..."
+            [(ngModel)]="searchTerm"
+            (input)="searchMessages()">
+          
+          <select 
+            class="filter-select"
+            [(ngModel)]="selectedMessageStatus" 
+            (change)="filterMessages()">
+            <option value="">Alle statussen</option>
+            <option value="PENDING">In behandeling</option>
+            <option value="READ">Gelezen</option>
+            <option value="RESPONDED">Beantwoord</option>
+            <option value="CLOSED">Gesloten</option>
+          </select>
+        </div>
+        
+        <div class="stats-summary">
+          <div class="stat-item">
+            <div class="stat-number">{{ messageStats?.pendingMessages || 0 }}</div>
+            <div class="stat-label">In behandeling</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">{{ messageStats?.unreadMessages || 0 }}</div>
+            <div class="stat-label">Ongelezen</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">{{ messageStats?.respondedMessages || 0 }}</div>
+            <div class="stat-label">Beantwoord</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="messages-list" *ngIf="!isLoadingMessages && filteredMessages.length > 0">
+        <div class="message-card" *ngFor="let message of filteredMessages">
+          <div class="message-header">
+            <div class="message-info">
+              <div class="message-from">{{ message.name }}</div>
+              <div class="message-email">{{ message.email }}</div>
+              <div class="message-subject">{{ message.subject }}</div>
+              <div class="message-meta">
+                <div class="meta-item">
+                  <span>📅 {{ formatDate(message.createdAt) }}</span>
+                </div>
+                <div class="meta-item">
+                  <span>🏷️ {{ message.reason }}</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="message-status">
+              <span class="status-badge" [ngClass]="message.status.toLowerCase()">
+                {{ getStatusText(message.status) }}
+              </span>
+            </div>
+          </div>
+          
+          <div class="message-content">
+            <div class="message-text">{{ message.message }}</div>
+          </div>
+          
+          <div class="admin-response" *ngIf="message.adminResponse">
+            <div class="response-header">
+              <span class="admin-badge">Admin Response</span>
+              <span *ngIf="message.respondedAt">{{ formatDate(message.respondedAt) }}</span>
+            </div>
+            <div class="response-text">{{ message.adminResponse }}</div>
+          </div>
+          
+          <div class="message-actions">
+            <button 
+              class="action-btn primary"
+              *ngIf="!respondingToMessage || respondingToMessage.id !== message.id"
+              (click)="startResponse(message)">
+              💬 Reageren
+            </button>
+            
+            <button 
+              class="action-btn secondary"
+              (click)="markAsRead(message.id)"
+              *ngIf="message.status === 'PENDING'">
+              👁️ Markeren als gelezen
+            </button>
+            
+            <button 
+              class="action-btn danger"
+              (click)="closeMessage(message.id)"
+              *ngIf="message.status !== 'CLOSED'">
+              ❌ Sluiten
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="response-form" *ngIf="respondingToMessage">
+        <div class="form-header">
+          <h4>Reageer op bericht van {{ respondingToMessage.name }}</h4>
+          <button class="close-btn" (click)="cancelResponse()">✕</button>
+        </div>
+        
+        <div class="form-group">
+          <label for="adminResponse">Uw reactie:</label>
+          <textarea 
+            id="adminResponse"
+            [(ngModel)]="adminResponse"
+            placeholder="Typ hier uw reactie..."
+            rows="6">
+          </textarea>
+        </div>
+        
+        <div class="form-group">
+          <label for="messageStatus">Status bijwerken:</label>
+          <select id="messageStatus" [(ngModel)]="responseStatus">
+            <option value="READ">Gelezen</option>
+            <option value="RESPONDED">Beantwoord</option>
+            <option value="CLOSED">Gesloten</option>
+          </select>
+        </div>
+        
+        <div class="form-actions">
+          <button 
+            class="form-btn primary"
+            (click)="submitResponse()"
+            [disabled]="!adminResponse.trim()">
+            📤 Verstuur reactie
+          </button>
+          <button 
+            class="form-btn secondary"
+            (click)="cancelResponse()">
+            🚫 Annuleren
+          </button>
+        </div>
+      </div>
+
+      <div class="loading-state" *ngIf="isLoadingMessages">
+        <div class="spinner"></div>
+        <span>Berichten laden...</span>
+      </div>
+
+      <div class="empty-state" *ngIf="!isLoadingMessages && filteredMessages.length === 0">
+        <div class="empty-icon">📭</div>
+        <div class="empty-title">Geen berichten gevonden</div>
+        <div class="empty-description">Er zijn momenteel geen berichten die voldoen aan uw zoekcriteria.</div>
+      </div>    </div>
   </div>
 </div>

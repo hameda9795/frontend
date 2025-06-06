@@ -231,14 +231,131 @@
                 </div>
               </div>
             </div>
-          </div>
-          <ng-template #noFavoriteVideos>
+          </div>          <ng-template #noFavoriteVideos>
             <div class="empty-state">
               <mat-icon>star_border</mat-icon>
               <h3>Geen favorieten</h3>
               <p>Je hebt nog geen favoriete video's. Voeg video's toe aan je favorieten!</p>
             </div>
           </ng-template>
+        </div>
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon>message</mat-icon>
+          <span>Berichten</span>
+          <span class="tab-count" *ngIf="unreadMessagesCount > 0">{{ unreadMessagesCount }}</span>
+        </ng-template>
+        
+        <div class="messages-content">
+          <!-- Messages Header -->
+          <div class="messages-header">
+            <h3>Mijn Berichten</h3>
+            <p>Bekijk je contactberichten en antwoorden van ons team</p>
+          </div>
+
+          <!-- Messages List -->
+          <div class="messages-list" *ngIf="userMessages.length > 0; else noMessages">
+            <div class="message-card" *ngFor="let message of userMessages" 
+                 [class.unread]="message.status === 'PENDING' || message.status === 'READ'"
+                 [class.responded]="message.status === 'RESPONDED'">
+              
+              <div class="message-header">
+                <div class="message-info">
+                  <h4>{{ message.subject }}</h4>
+                  <div class="message-meta">
+                    <span class="message-date">{{ formatDate(message.createdAt) }}</span>
+                    <span class="message-status" [ngClass]="'status-' + message.status.toLowerCase()">
+                      {{ getStatusText(message.status) }}
+                    </span>
+                  </div>
+                </div>
+                <button class="expand-btn" (click)="toggleMessage(message.id)">
+                  <mat-icon>{{ expandedMessages.has(message.id) ? 'expand_less' : 'expand_more' }}</mat-icon>
+                </button>
+              </div>
+
+              <div class="message-content" *ngIf="expandedMessages.has(message.id)">
+                <div class="original-message">
+                  <div class="message-section">
+                    <label>Onderwerp:</label>
+                    <span>{{ message.reason }}</span>
+                  </div>
+                  <div class="message-section">
+                    <label>Bericht:</label>
+                    <p>{{ message.message }}</p>
+                  </div>
+                </div>
+
+                <!-- Admin Response -->
+                <div class="admin-response" *ngIf="message.adminResponse">
+                  <div class="response-header">
+                    <mat-icon>reply</mat-icon>
+                    <span>Antwoord van {{ message.respondedBy || 'Support Team' }}</span>
+                    <span class="response-date">{{ message.respondedAt ? formatDate(message.respondedAt) : 'No response date' }}</span>
+                  </div>
+                  <div class="response-content">
+                    <p>{{ message.adminResponse }}</p>
+                  </div>
+                </div>
+
+                <!-- Message Actions -->
+                <div class="message-actions" *ngIf="message.status === 'RESPONDED'">
+                  <button class="reply-btn" (click)="replyToMessage(message)" *ngIf="!showReplyForm[message.id]">
+                    <mat-icon>reply</mat-icon>
+                    Antwoorden
+                  </button>
+                </div>
+
+                <!-- Reply Form -->
+                <div class="reply-form" *ngIf="showReplyForm[message.id]">
+                  <h5>Reageer op dit bericht</h5>
+                  <textarea 
+                    [(ngModel)]="replyText[message.id]" 
+                    placeholder="Typ je reactie hier..."
+                    rows="4"
+                    class="reply-textarea"></textarea>
+                  <div class="reply-actions">
+                    <button class="send-reply-btn" (click)="sendReply(message.id)" 
+                            [disabled]="!replyText[message.id] || !replyText[message.id].trim()">
+                      <mat-icon>send</mat-icon>
+                      Versturen
+                    </button>
+                    <button class="cancel-reply-btn" (click)="cancelReply(message.id)">
+                      Annuleren
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- No Messages State -->
+          <ng-template #noMessages>
+            <div class="empty-state">
+              <mat-icon>message</mat-icon>
+              <h3>Geen berichten</h3>
+              <p>Je hebt nog geen berichten verzonden. Gebruik ons contactformulier om contact op te nemen!</p>
+              <button class="contact-btn" routerLink="/contact">
+                <mat-icon>send</mat-icon>
+                Contact opnemen
+              </button>
+            </div>
+          </ng-template>
+
+          <!-- Pagination -->
+          <div class="messages-pagination" *ngIf="totalMessagesPages > 1">
+            <button class="page-btn" (click)="loadMessages(currentMessagesPage - 1)" 
+                    [disabled]="currentMessagesPage === 0">
+              <mat-icon>chevron_left</mat-icon>
+            </button>
+            <span class="page-info">{{ currentMessagesPage + 1 }} / {{ totalMessagesPages }}</span>
+            <button class="page-btn" (click)="loadMessages(currentMessagesPage + 1)" 
+                    [disabled]="currentMessagesPage >= totalMessagesPages - 1">
+              <mat-icon>chevron_right</mat-icon>
+            </button>
+          </div>
         </div>
       </mat-tab>
     </mat-tab-group>

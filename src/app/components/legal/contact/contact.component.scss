@@ -288,6 +288,29 @@
   to { transform: rotate(360deg); }
 }
 
+.error-message-container {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  
+  .error-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+  }
+  
+  p {
+    color: #dc2626;
+    font-weight: 500;
+    margin: 0;
+    font-size: 0.9rem;
+  }
+}
+
 .success-message {
   padding: 3rem 2.5rem;
   text-align: center;

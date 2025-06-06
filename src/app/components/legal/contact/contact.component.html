@@ -99,9 +99,7 @@
                   </div>                  <div class="error-message" *ngIf="contactForm.get('message')?.hasError('minlength') && contactForm.get('message')?.touched">
                     ❌ Bericht moet minimaal 20 karakters bevatten
                   </div>
-                </div>
-
-                <div class="form-actions">
+                </div>                <div class="form-actions">
                   <button type="submit" 
                           class="submit-btn"
                           [disabled]="isSubmitting">
@@ -109,6 +107,12 @@
                     <mat-icon *ngIf="isSubmitting" class="spinning">hourglass_empty</mat-icon>
                     {{ isSubmitting ? 'Verzenden...' : 'Bericht versturen' }}
                   </button>
+                </div>
+
+                <!-- Error Message -->
+                <div class="error-message-container" *ngIf="errorMessage">
+                  <div class="error-icon">❌</div>
+                  <p>{{ errorMessage }}</p>
                 </div>
 
               </form>

@@ -5,8 +5,10 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
+import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../services/auth.service';
 import { VideoService, Video } from '../../../services/video.service';
+import { MessageService, MessageResponse } from '../../../services/message.service';
 
 @Component({
   selector: 'app-profile',
@@ -16,30 +18,42 @@ import { VideoService, Video } from '../../../services/video.service';
     MatCardModule,
     MatButtonModule,
     MatIconModule,
-    MatTabsModule
+    MatTabsModule,
+    FormsModule
   ],
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss']
 })
-export class ProfileComponent implements OnInit {  user: any = null;
+export class ProfileComponent implements OnInit {
+  user: any = null;
   loading = true;
   likedVideos: Video[] = [];
   favoriteVideos: Video[] = [];
   loadingLikedVideos = true;
   loadingFavoriteVideos = true;
-  activeTab = 'profile'; // 'profile', 'liked', 'favorites'
+  activeTab = 'profile'; // 'profile', 'liked', 'favorites', 'messages'
   selectedTabIndex = 0; // For Material tabs
+
+  // Messages properties
+  userMessages: MessageResponse[] = [];
+  loadingMessages = true;
+  currentMessagesPage = 0;
+  totalMessagesPages = 0;
+  unreadMessagesCount = 0;
+  expandedMessages = new Set<number>();
+  showReplyForm: { [key: number]: boolean } = {};
+  replyText: { [key: number]: string } = {};
   playingVideoId: number | null = null;
-  viewIncrementedVideos: Set<number> = new Set();
-  constructor(
+  viewIncrementedVideos: Set<number> = new Set();  constructor(
     public authService: AuthService,
     private videoService: VideoService,
+    private messageService: MessageService,
     private router: Router
-  ) {}
-  ngOnInit(): void {
+  ) {}  ngOnInit(): void {
     this.loadUserProfile();
     this.loadLikedVideos();
     this.loadFavoriteVideos();
+    this.loadMessages();
   }
 
   loadUserProfile(): void {
@@ -238,12 +252,96 @@ export class ProfileComponent implements OnInit {  user: any = null;
         console.error('Error removing favorite:', error);
       }
     });
-  }
-  formatDuration(duration?: number): string {
+  }  formatDuration(duration?: number): string {
     if (!duration) return '0:00';
     const minutes = Math.floor(duration / 60);
     const seconds = duration % 60;
     return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  }
+
+  // Messages methods
+  loadMessages(page: number = 0): void {
+    this.loadingMessages = true;
+    this.messageService.getMyMessages(page, 10).subscribe({
+      next: (response) => {
+        this.userMessages = response.content;
+        this.currentMessagesPage = response.number;
+        this.totalMessagesPages = response.totalPages;
+        this.unreadMessagesCount = response.content.filter(m => 
+          m.status === 'PENDING' || m.status === 'READ').length;
+        this.loadingMessages = false;
+      },
+      error: (error) => {
+        console.error('Error loading messages:', error);
+        this.loadingMessages = false;
+      }
+    });
+  }
+
+  toggleMessage(messageId: number): void {
+    if (this.expandedMessages.has(messageId)) {
+      this.expandedMessages.delete(messageId);
+    } else {
+      this.expandedMessages.add(messageId);
+    }
+  }
+
+  replyToMessage(message: MessageResponse): void {
+    this.showReplyForm[message.id] = true;
+    this.replyText[message.id] = '';
+  }
+
+  sendReply(messageId: number): void {
+    const replyText = this.replyText[messageId]?.trim();
+    if (!replyText) return;
+
+    // Create a new message for the reply
+    const replyData = {
+      name: this.user.username,
+      email: this.user.email,
+      reason: 'reply',
+      subject: `Re: ${this.userMessages.find(m => m.id === messageId)?.subject}`,
+      message: replyText
+    };
+
+    this.messageService.sendMessage(replyData).subscribe({
+      next: (response) => {
+        this.showReplyForm[messageId] = false;
+        this.replyText[messageId] = '';
+        this.loadMessages(this.currentMessagesPage); // Reload messages
+        console.log('Reply sent successfully');
+      },
+      error: (error) => {
+        console.error('Error sending reply:', error);
+      }
+    });
+  }
+
+  cancelReply(messageId: number): void {
+    this.showReplyForm[messageId] = false;
+    this.replyText[messageId] = '';
+  }
+
+  formatDate(dateString: string): string {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('nl-NL', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  }
+
+  getStatusText(status: string): string {
+    switch (status) {
+      case 'PENDING': return 'In behandeling';
+      case 'READ': return 'Gelezen';
+      case 'RESPONDED': return 'Beantwoord';
+      case 'CLOSED': return 'Gesloten';
+      default: return status;
+    }
   }
 
 }
