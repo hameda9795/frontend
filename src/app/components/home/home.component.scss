@@ -66,8 +66,7 @@
   @media (max-width: 768px) {
     padding: var(--space-xl) var(--space-md);
   }
-  
-  h1 {
+    h1 {
     font-size: var(--font-size-4xl);
     font-weight: 700;
     margin-bottom: var(--space-md);
@@ -81,18 +80,33 @@
       font-size: var(--font-size-5xl);
     }
     
+    @media (min-width: 1024px) {
+      font-size: var(--font-size-6xl);
+    }
+    
+    @media (min-width: 1440px) {
+      font-size: var(--font-size-7xl);
+    }
+    
     // Mobile: smaller title
     @media (max-width: 480px) {
       font-size: var(--font-size-3xl);
     }
   }
-  
-  .subtitle {
+    .subtitle {
     font-size: var(--font-size-lg);
     color: var(--text-secondary);
     margin-bottom: var(--space-2xl);
     line-height: 1.6;
     animation: slideInUp 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both;
+    
+    @media (min-width: 1024px) {
+      font-size: var(--font-size-xl);
+    }
+    
+    @media (min-width: 1440px) {
+      font-size: var(--font-size-2xl);
+    }
     
     // Mobile: smaller subtitle
     @media (max-width: 480px) {
