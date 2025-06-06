@@ -351,26 +351,20 @@
   }
 }
 
-// Videos Grid for Profile - 4 videos per row
+// Videos Grid for Profile - Responsive layout
 .videos-grid {
   display: grid;
   gap: var(--space-lg);
-  grid-template-columns: 1fr; // Single column on mobile
+  grid-template-columns: 1fr; // Mobile: 1 video per row
   max-width: 100%;
   margin: 0 auto;
-  
-  // 2 columns on small tablets
-  @media (min-width: 480px) {
+    // Tablet: 2 videos per row
+  @media (min-width: 768px) {
     grid-template-columns: repeat(2, 1fr);
     max-width: none;
   }
   
-  // 3 columns on tablets
-  @media (min-width: 768px) {
-    grid-template-columns: repeat(3, 1fr);
-  }
-  
-  // 4 columns on desktop and larger screens (main requirement)
+  // Desktop: 4 videos per row
   @media (min-width: 1024px) {
     grid-template-columns: repeat(4, 1fr);
   }
@@ -531,10 +525,14 @@
 }
 
 .video-info {
-  padding: var(--space-lg);
+  padding: var(--space-md); // Smaller padding for mobile
   
-  .video-title {
-    font-size: var(--font-size-lg);
+  // Tablet and up: larger padding
+  @media (min-width: 768px) {
+    padding: var(--space-lg);
+  }
+    .video-title {
+    font-size: var(--font-size-base); // Smaller for mobile
     font-weight: 600;
     margin-bottom: var(--space-sm);
     color: var(--text-primary);
@@ -546,13 +544,22 @@
     line-height: 1.4;
     transition: color var(--transition-normal);
     
+    // Tablet: medium size
+    @media (min-width: 768px) {
+      font-size: var(--font-size-lg);
+    }
+    
+    // Desktop: larger size
+    @media (min-width: 1024px) {
+      font-size: var(--font-size-lg);
+    }
+    
     &:hover {
       color: var(--primary-color);
     }
   }
-  
-  .video-description {
-    font-size: var(--font-size-sm);
+    .video-description {
+    font-size: var(--font-size-xs); // Smaller for mobile
     color: var(--text-secondary);
     margin-bottom: var(--space-md);
     display: -webkit-box;
@@ -561,26 +568,31 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
     line-height: 1.5;
+    
+    // Tablet and up: larger size
+    @media (min-width: 768px) {
+      font-size: var(--font-size-sm);
+    }
   }
-  
-  .video-meta {
+    .video-meta {
     display: flex;
     align-items: center;
     margin-bottom: var(--space-md);
-    font-size: var(--font-size-sm);
+    font-size: var(--font-size-xs); // Smaller for mobile
     gap: var(--space-xs);
     
     // Mobile: spread across full width
     justify-content: space-between;
     
-    // Tablet and up: center with gaps
-    @media (min-width: 576px) {
+    // Tablet: medium size, center with gaps
+    @media (min-width: 768px) {
+      font-size: var(--font-size-sm);
       justify-content: center;
       gap: var(--space-sm);
     }
     
     // Desktop: more spacing
-    @media (min-width: 768px) {
+    @media (min-width: 1024px) {
       gap: var(--space-md);
     }
     
@@ -594,12 +606,11 @@
       font-weight: 500;
       justify-content: center;
       min-width: fit-content;
-      
-      // Mobile: equal flex
+        // Mobile: equal flex
       flex: 1;
       
       // Tablet and up: natural width
-      @media (min-width: 576px) {
+      @media (min-width: 768px) {
         flex: none;
         min-width: auto;
       }
@@ -839,22 +850,28 @@
     margin-top: var(--space-md);
     padding-top: var(--space-md);
     border-top: 1px solid rgba(148, 163, 184, 0.1);
-    
-    .action-btn {
+      .action-btn {
       display: flex;
       align-items: center;
       justify-content: center;
       gap: var(--space-xs);
-      padding: var(--space-sm) var(--space-md);
+      padding: var(--space-xs) var(--space-sm); // Smaller padding for mobile
       border: 1px solid rgba(148, 163, 184, 0.2);
       border-radius: var(--radius-lg);
       background: var(--bg-card);
       color: var(--text-secondary);
       cursor: pointer;
       transition: all var(--transition-normal);
-      font-size: var(--font-size-sm);
+      font-size: var(--font-size-xs); // Smaller font for mobile
       font-weight: 500;
       flex: 1;
+      
+      // Tablet and up: larger size
+      @media (min-width: 768px) {
+        padding: var(--space-sm) var(--space-md);
+        font-size: var(--font-size-sm);
+        gap: var(--space-sm);
+      }
       
       .btn-text {
         transition: all var(--transition-normal);
