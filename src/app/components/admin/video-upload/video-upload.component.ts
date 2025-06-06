@@ -13,7 +13,7 @@ import { VideoService } from '../../../services/video.service';
   styleUrls: ['./video-upload.component.scss']
 })
 export class VideoUploadComponent implements OnInit {
-  uploadForm!: FormGroup;
+  uploadForm: FormGroup;
   isLoading = false;
   errorMessage = '';
   successMessage = '';
@@ -25,14 +25,8 @@ export class VideoUploadComponent implements OnInit {
     private authService: AuthService,
     private videoService: VideoService,
     private router: Router
-  ) {}
-
-  ngOnInit(): void {
-    if (!this.authService.isAdmin()) {
-      this.router.navigate(['/home']);
-      return;
-    }
-
+  ) {
+    // Initialize the form in constructor to avoid template errors
     this.uploadForm = this.fb.group({
       title: ['', [Validators.required, Validators.minLength(3)]],
       description: [''],
@@ -49,6 +43,13 @@ export class VideoUploadComponent implements OnInit {
       youtubeMusicLink: [''],
       instagramLink: ['']
     });
+  }
+
+  ngOnInit(): void {
+    if (!this.authService.isAdmin()) {
+      this.router.navigate(['/home']);
+      return;
+    }
   }
 
   onVideoFileChange(event: Event): void {
@@ -117,8 +118,7 @@ export class VideoUploadComponent implements OnInit {
       });
     }
   }
-
   get title() {
-    return this.uploadForm.get('title');
+    return this.uploadForm?.get('title');
   }
 }

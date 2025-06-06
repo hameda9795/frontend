@@ -3,8 +3,7 @@
     <h1>📹 Video Uploaden</h1>
     <a routerLink="/admin" class="btn btn-secondary">← Terug naar Dashboard</a>
   </div>
-
-  <div class="upload-form-container">
+  <div class="upload-form-container" *ngIf="uploadForm">
     <form [formGroup]="uploadForm" (ngSubmit)="onSubmit()" class="upload-form">
       
       <!-- Basic Information -->
