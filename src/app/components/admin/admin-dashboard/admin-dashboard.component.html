@@ -10,76 +10,304 @@
       </a>
     </div>
   </div>
-
-  <div class="dashboard-stats">
-    <div class="stat-card">
-      <div class="stat-number">{{ videos.length }}</div>
-      <div class="stat-label">Totaal Video's</div>
-    </div>    <div class="stat-card">
-      <div class="stat-number">{{ getFreeVideosCount() }}</div>
-      <div class="stat-label">Gratis Video's</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-number">{{ getPremiumVideosCount() }}</div>
-      <div class="stat-label">Premium Video's</div>
-    </div>    <div class="stat-card">
-      <div class="stat-number">{{ formatViews(getTotalViews()) }}</div>
-      <div class="stat-label">Totaal Weergaven</div>
+  <!-- Navigation Tabs -->
+  <div class="tab-navigation">
+    <button 
+      class="tab-button" 
+      [class.active]="activeTab === 'overview'"
+      (click)="setActiveTab('overview')">
+      <i class="fas fa-chart-bar"></i>
+      📊 Overzicht
+    </button>
+    <button 
+      class="tab-button" 
+      [class.active]="activeTab === 'videos'"
+      (click)="setActiveTab('videos')">
+      <i class="fas fa-video"></i>
+      🎥 Video's
+    </button>
+    <button 
+      class="tab-button" 
+      [class.active]="activeTab === 'users'"
+      (click)="setActiveTab('users')">
+      <i class="fas fa-users"></i>
+      👥 Gebruikers
+    </button>
+  </div>
+  <!-- Overview Tab -->
+  <div class="tab-content" *ngIf="activeTab === 'overview'">
+    <div class="dashboard-stats">
+      <div class="stat-card">
+        <div class="stat-icon videos">
+          <i class="fas fa-video"></i>
+        </div>
+        <div class="stat-number">{{ videos.length }}</div>
+        <div class="stat-label">Totaal Video's</div>
+        <div class="stat-change positive">+5% deze maand</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon free">
+          <i class="fas fa-unlock"></i>
+        </div>
+        <div class="stat-number">{{ getFreeVideosCount() }}</div>
+        <div class="stat-label">Gratis Video's</div>
+        <div class="stat-change positive">+12% deze week</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon premium">
+          <i class="fas fa-crown"></i>
+        </div>
+        <div class="stat-number">{{ getPremiumVideosCount() }}</div>
+        <div class="stat-label">Premium Video's</div>
+        <div class="stat-change positive">+8% deze week</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon views">
+          <i class="fas fa-eye"></i>
+        </div>
+        <div class="stat-number">{{ formatViews(getTotalViews()) }}</div>
+        <div class="stat-label">Totaal Weergaven</div>
+        <div class="stat-change positive">+23% vandaag</div>
+      </div>
+      <div class="stat-card" *ngIf="userStats">
+        <div class="stat-icon users">
+          <i class="fas fa-users"></i>
+        </div>
+        <div class="stat-number">{{ userStats.totalUsers }}</div>
+        <div class="stat-label">Totaal Gebruikers</div>
+        <div class="stat-change positive">+15% deze maand</div>
+      </div>
+      <div class="stat-card" *ngIf="userStats">
+        <div class="stat-icon premium">
+          <i class="fas fa-star"></i>
+        </div>
+        <div class="stat-number">{{ userStats.premiumUsers }}</div>
+        <div class="stat-label">Premium Gebruikers</div>
+        <div class="stat-change positive">+28% deze maand</div>
+      </div>
     </div>
   </div>
 
-  <div class="videos-section">
-    <h2>Video Beheer</h2>
-    
-    <div class="loading" *ngIf="loading">
-      <div class="spinner"></div>
-      <p>Video's laden...</p>
-    </div>
+  <!-- Videos Tab -->
+  <div class="tab-content" *ngIf="activeTab === 'videos'">
+    <div class="videos-section">
+      <h2>Video Beheer</h2>
+      
+      <div class="loading" *ngIf="loading">
+        <div class="spinner"></div>
+        <p>Video's laden...</p>
+      </div>
 
-    <div class="error" *ngIf="error && !loading">
-      <p>{{ error }}</p>
-      <button class="btn btn-primary" (click)="loadVideos()">Opnieuw proberen</button>
-    </div>
+      <div class="error" *ngIf="error && !loading">
+        <p>{{ error }}</p>
+        <button class="btn btn-primary" (click)="loadVideos()">Opnieuw proberen</button>
+      </div>
 
-    <div class="videos-grid" *ngIf="!loading && !error">
-      <div class="video-card" *ngFor="let video of videos">
-        <div class="video-thumbnail">
-          <img [src]="getVideoThumbnail(video)" [alt]="video.title" />
-          <div class="content-type-badge" [class.premium]="video.contentType === 'PREMIUM'">
-            {{ video.contentType === 'FREE' ? 'Gratis' : 'Premium' }}
-          </div>
-        </div>
-        
-        <div class="video-info">
-          <h3 class="video-title">{{ video.title }}</h3>
-          <p class="video-description">{{ video.description || 'Geen beschrijving' }}</p>
-            <div class="video-stats">
-            <span class="stat">👁️ {{ formatViews(video.viewCount) }}</span>
-            <span class="stat">❤️ {{ video.likeCount }}</span>
+      <div class="videos-grid" *ngIf="!loading && !error">
+        <div class="video-card" *ngFor="let video of videos">
+          <div class="video-thumbnail">
+            <img [src]="getVideoThumbnail(video)" [alt]="video.title" />
+            <div class="content-type-badge" [class.premium]="video.contentType === 'PREMIUM'">
+              {{ video.contentType === 'FREE' ? 'Gratis' : 'Premium' }}
+            </div>
           </div>
           
-          <div class="video-meta">
-            <small>Aangemaakt: {{ video.createdAt | date:'short' }}</small>
+          <div class="video-info">
+            <h3 class="video-title">{{ video.title }}</h3>
+            <p class="video-description">{{ video.description || 'Geen beschrijving' }}</p>
+            <div class="video-stats">
+              <span class="stat">👁️ {{ formatViews(video.viewCount) }}</span>
+              <span class="stat">❤️ {{ video.likeCount }}</span>
+            </div>
+            
+            <div class="video-meta">
+              <small>Aangemaakt: {{ video.createdAt | date:'short' }}</small>
+            </div>
+          </div>
+          
+          <div class="video-actions">
+            <a [routerLink]="['/video', video.id]" class="btn btn-sm btn-view">
+              👁️ Bekijken
+            </a>
+            <button class="btn btn-sm btn-delete" (click)="deleteVideo(video.id)">
+              🗑️ Verwijderen
+            </button>
           </div>
         </div>
-        
-        <div class="video-actions">
-          <a [routerLink]="['/video', video.id]" class="btn btn-sm btn-view">
-            👁️ Bekijken
-          </a>
-          <button class="btn btn-sm btn-delete" (click)="deleteVideo(video.id)">
-            🗑️ Verwijderen
-          </button>
-        </div>
+      </div>
+
+      <div class="empty-state" *ngIf="!loading && !error && videos.length === 0">
+        <h3>Geen video's gevonden</h3>
+        <p>Upload je eerste video om te beginnen!</p>
+        <a routerLink="/admin/upload" class="btn btn-primary">
+          ➕ Video Uploaden
+        </a>
       </div>
     </div>
+  </div>
 
-    <div class="empty-state" *ngIf="!loading && !error && videos.length === 0">
-      <h3>Geen video's gevonden</h3>
-      <p>Upload je eerste video om te beginnen!</p>
-      <a routerLink="/admin/upload" class="btn btn-primary">
-        ➕ Video Uploaden
-      </a>
+  <!-- Users Tab -->
+  <div class="tab-content" *ngIf="activeTab === 'users'">
+    <div class="users-section">
+      <div class="users-header">
+        <h2>Gebruikersbeheer</h2>
+        <button class="btn btn-primary" (click)="toggleAddUserForm()">
+          ➕ Nieuwe Gebruiker Toevoegen
+        </button>
+      </div>
+
+      <!-- Add User Form -->
+      <div class="add-user-form" *ngIf="showAddUserForm">
+        <div class="form-container">
+          <h3>Nieuwe Gebruiker Toevoegen</h3>
+          <form [formGroup]="addUserForm" (ngSubmit)="onSubmitUser()">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="username">Gebruikersnaam *</label>
+                <input
+                  type="text"
+                  id="username"
+                  formControlName="username"
+                  class="form-control"
+                  [class.is-invalid]="username?.invalid && username?.touched"
+                  placeholder="Voer gebruikersnaam in"
+                />
+                <div class="invalid-feedback" *ngIf="username?.invalid && username?.touched">
+                  <div *ngIf="username?.errors?.['required']">Gebruikersnaam is verplicht</div>
+                  <div *ngIf="username?.errors?.['minlength']">Gebruikersnaam moet minimaal 3 karakters bevatten</div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="email">E-mailadres *</label>
+                <input
+                  type="email"
+                  id="email"
+                  formControlName="email"
+                  class="form-control"
+                  [class.is-invalid]="email?.invalid && email?.touched"
+                  placeholder="Voer e-mailadres in"
+                />
+                <div class="invalid-feedback" *ngIf="email?.invalid && email?.touched">
+                  <div *ngIf="email?.errors?.['required']">E-mailadres is verplicht</div>
+                  <div *ngIf="email?.errors?.['email']">Voer een geldig e-mailadres in</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="password">Wachtwoord *</label>
+                <input
+                  type="password"
+                  id="password"
+                  formControlName="password"
+                  class="form-control"
+                  [class.is-invalid]="password?.invalid && password?.touched"
+                  placeholder="Voer wachtwoord in"
+                />
+                <div class="invalid-feedback" *ngIf="password?.invalid && password?.touched">
+                  <div *ngIf="password?.errors?.['required']">Wachtwoord is verplicht</div>
+                  <div *ngIf="password?.errors?.['minlength']">Wachtwoord moet minimaal 6 karakters bevatten</div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="role">Rol</label>
+                <select id="role" formControlName="role" class="form-control">
+                  <option value="USER">Gebruiker</option>
+                  <option value="ADMIN">Beheerder</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="checkbox-label">
+                <input type="checkbox" formControlName="isPremium" />
+                <span class="checkmark"></span>
+                Premium abonnement
+              </label>
+            </div>
+
+            <div class="form-actions">
+              <button type="button" class="btn btn-secondary" (click)="toggleAddUserForm()">
+                Annuleren
+              </button>
+              <button 
+                type="submit" 
+                class="btn btn-primary" 
+                [disabled]="addUserForm.invalid || isSubmittingUser">
+                <span *ngIf="isSubmittingUser">Toevoegen...</span>
+                <span *ngIf="!isSubmittingUser">Gebruiker Toevoegen</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Users List -->
+      <div class="loading" *ngIf="loadingUsers">
+        <div class="spinner"></div>
+        <p>Gebruikers laden...</p>
+      </div>
+
+      <div class="error" *ngIf="userError && !loadingUsers">
+        <p>{{ userError }}</p>
+        <button class="btn btn-primary" (click)="loadUsers()">Opnieuw proberen</button>
+      </div>
+
+      <div class="users-table" *ngIf="!loadingUsers && !userError && users.length > 0">
+        <div class="table-header">
+          <div class="table-cell">Gebruiker</div>
+          <div class="table-cell">E-mail</div>
+          <div class="table-cell">Rol</div>
+          <div class="table-cell">Abonnement</div>
+          <div class="table-cell">Aangemaakt</div>
+          <div class="table-cell">Acties</div>
+        </div>
+
+        <div class="table-row" *ngFor="let user of users">
+          <div class="table-cell">
+            <div class="user-info">
+              <div class="user-avatar">{{ user.username.charAt(0).toUpperCase() }}</div>
+              <span class="username">{{ user.username }}</span>
+            </div>
+          </div>
+          <div class="table-cell">{{ user.email }}</div>
+          <div class="table-cell">
+            <span class="role-badge" [class.admin]="user.role === 'ADMIN'">
+              {{ user.role === 'ADMIN' ? 'Beheerder' : 'Gebruiker' }}
+            </span>
+          </div>
+          <div class="table-cell">
+            <button 
+              class="subscription-toggle"
+              [class.premium]="user.isPremium"
+              (click)="toggleUserPremium(user)">
+              {{ user.isPremium ? 'Premium' : 'Gratis' }}
+            </button>
+          </div>
+          <div class="table-cell">{{ formatDate(user.createdAt) }}</div>
+          <div class="table-cell">
+            <div class="action-buttons">
+              <button 
+                class="btn btn-sm btn-delete" 
+                (click)="deleteUser(user.id)"
+                [disabled]="user.role === 'ADMIN'">
+                🗑️
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="empty-state" *ngIf="!loadingUsers && !userError && users.length === 0">
+        <h3>Geen gebruikers gevonden</h3>
+        <p>Er zijn nog geen gebruikers geregistreerd.</p>
+        <button class="btn btn-primary" (click)="toggleAddUserForm()">
+          ➕ Eerste Gebruiker Toevoegen
+        </button>
+      </div>
     </div>
   </div>
 </div>

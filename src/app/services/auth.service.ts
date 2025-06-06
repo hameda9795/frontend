@@ -111,6 +111,10 @@ export class AuthService {
 
   getAuthHeaders(): HttpHeaders {
     const token = this.getToken();
+    if (!token) {
+      console.warn('No authentication token found');
+      return new HttpHeaders();
+    }
     return new HttpHeaders({
       'Authorization': `Bearer ${token}`
     });
