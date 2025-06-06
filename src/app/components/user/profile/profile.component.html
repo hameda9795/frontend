@@ -1,435 +1,248 @@
-<div class="profile-container" *ngIf="!loading && user">
-  <div class="profile-header">
-    <h1>Mijn Profiel</h1>
+<div class="profile-container" *ngIf="!loading && user">  <!-- Hero Profile Header -->
+  <div class="profile-hero">
+    <div class="hero-content">
+      <!-- Hero Avatar -->
+      <div class="hero-avatar">
+        <div class="avatar-container">
+          <div class="user-avatar">
+            <span class="avatar-initial">{{ user.username.charAt(0).toUpperCase() }}</span>
+          </div>
+          <div class="status-indicator"></div>
+        </div>
+      </div>
+
+      <!-- Hero Info -->
+      <div class="hero-info">
+        <div class="user-title">
+          <h1 class="username">{{ user.username }}</h1>
+          <span class="verified-badge" *ngIf="user.premium">
+            <mat-icon>star</mat-icon>
+            Premium
+          </span>
+          <span class="admin-badge" *ngIf="user.roles.includes('ROLE_ADMIN')">
+            <mat-icon>admin_panel_settings</mat-icon>
+            Administrator
+          </span>
+        </div>
+        
+        <div class="user-meta">
+          <div class="meta-item">
+            <mat-icon>email</mat-icon>
+            <span>{{ user.email }}</span>
+          </div>
+          <div class="meta-item">
+            <mat-icon>calendar_today</mat-icon>
+            <span>Lid sinds {{ user.createdAt | date:'MMMM yyyy' }}</span>
+          </div>
+        </div>
+
+        <div class="hero-actions">
+          <a class="action-btn primary" *ngIf="isAdmin()" routerLink="/admin">
+            <mat-icon>dashboard</mat-icon>
+            <span>Beheerderspaneel</span>
+          </a>          <button class="action-btn danger" (click)="logout()">
+            <mat-icon>logout</mat-icon>
+            <span>Uitloggen</span>
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- Tab Navigation -->
   <div class="profile-tabs">
-    <button 
-      class="tab-btn" 
-      [class.active]="activeTab === 'profile'"
-      (click)="setActiveTab('profile')">
-      👤 Profiel
-    </button>
-    <button 
-      class="tab-btn" 
-      [class.active]="activeTab === 'liked'"
-      (click)="setActiveTab('liked')">
-      ❤️ Gelikte Video's ({{ likedVideos.length }})
-    </button>
-    <button 
-      class="tab-btn" 
-      [class.active]="activeTab === 'favorites'"
-      (click)="setActiveTab('favorites')">
-      ⭐ Favorieten ({{ favoriteVideos.length }})
-    </button>
-  </div>
-
-  <!-- Profile Tab Content -->
-  <div class="profile-content" *ngIf="activeTab === 'profile'">
-    <div class="profile-card">
-      <div class="user-avatar">
-        <div class="avatar-circle">
-          {{ user.username.charAt(0).toUpperCase() }}
-        </div>
-      </div>
-
-      <div class="user-info">
-        <h2>{{ user.username }}</h2>
-        <p class="email">{{ user.email }}</p>
-        
-        <div class="user-badges">
-          <span class="badge" *ngFor="let role of user.roles" [class.admin]="role === 'ROLE_ADMIN'">
-            {{ role === 'ROLE_ADMIN' ? 'Beheerder' : 'Gebruiker' }}
-          </span>
-          <span class="badge premium" *ngIf="user.premium">
-            Premium
-          </span>
-        </div>
-      </div>
-    </div>
-
-    <div class="profile-actions">
-      <div class="action-buttons">
-        <button class="btn btn-admin" *ngIf="isAdmin()" routerLink="/admin">
-          🛠️ Beheerderspaneel
-        </button>
-        
-        <button class="btn btn-logout" (click)="logout()">
-          🚪 Uitloggen
-        </button>
-      </div>
-    </div>
-
-    <div class="profile-stats">
-      <h3>Account Informatie</h3>
-      <div class="stats-grid">
-        <div class="stat-item">
-          <span class="stat-label">Account type:</span>
-          <span class="stat-value">{{ user.premium ? 'Premium' : 'Gratis' }}</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-label">Gebruikers ID:</span>
-          <span class="stat-value">#{{ user.id }}</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-label">Rollen:</span>
-          <span class="stat-value">{{ user.roles.length }}</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-label">Gelikte video's:</span>
-          <span class="stat-value">{{ likedVideos.length }}</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-label">Favoriete video's:</span>
-          <span class="stat-value">{{ favoriteVideos.length }}</span>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Liked Videos Tab Content -->
-  <div class="video-section" *ngIf="activeTab === 'liked'">
-    <div class="section-header">
-      <h2>❤️ Gelikte Video's</h2>
-      <p *ngIf="likedVideos.length === 0 && !loadingLikedVideos">Je hebt nog geen video's geliket.</p>
-    </div>
-
-    <div class="loading" *ngIf="loadingLikedVideos">
-      <div class="spinner"></div>
-      <p>Gelikte video's laden...</p>
-    </div>    <div class="videos-grid" *ngIf="!loadingLikedVideos && likedVideos.length > 0">
-      <div class="video-card" *ngFor="let video of likedVideos" (click)="playVideo(video)">
-        <!-- Video Thumbnail with 9:16 Aspect Ratio -->
-        <div class="video-thumbnail">
-          <!-- Video Player (Hidden by default) -->          
-          <video 
-            #videoPlayer
-            *ngIf="playingVideoId === video.id && canWatchVideo(video)"
-            [src]="getVideoUrl(video.videoUrl)" 
-            class="video-player"
-            controls
-            autoplay
-            (click)="$event.stopPropagation()"
-            (play)="onVideoPlay(video)"
-            (ended)="stopVideo()">
-          </video>
-          
-          <!-- Cover Image -->
-          <img 
-            *ngIf="playingVideoId !== video.id"
-            [src]="getVideoThumbnail(video)" 
-            [alt]="video.title"
-            class="cover-image"
-            (error)="onImageError($event)">
-          
-          <!-- Play Button Overlay -->
-          <div *ngIf="playingVideoId !== video.id" class="play-overlay">
-            <div class="play-button">
-              <mat-icon>{{ canWatchVideo(video) ? 'play_arrow' : 'lock' }}</mat-icon>
+    <mat-tab-group [(selectedIndex)]="selectedTabIndex" animationDuration="300ms">
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon>dashboard</mat-icon>
+          <span>Profiel</span>
+        </ng-template>
+        <div class="tab-content">
+          <!-- Stats Cards -->
+          <div class="stats-cards">
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="stat-title">Account Status</span>
+                <mat-icon class="stat-icon">account_circle</mat-icon>
+              </div>
+              <div class="stat-value">Actief</div>
+              <div class="stat-change positive">
+                <mat-icon>trending_up</mat-icon>
+                <span>Online</span>
+              </div>
             </div>
-          </div>
-          
-          <!-- Premium Badge -->
-          <div *ngIf="video.contentType === 'PREMIUM'" class="premium-badge">
-            <mat-icon>star</mat-icon>
-            <span>Premium</span>
-          </div>
-        </div>
-
-        <!-- Video Info -->
-        <div class="video-info">
-          <h3 class="video-title">{{ video.title }}</h3>
-          <p class="video-description" *ngIf="video.description">{{ video.description }}</p>
-          
-          <div class="video-meta">
-            <span class="views">
-              <span class="icon">👁️</span>
-              {{ formatViews(video.viewCount || 0) }}
-            </span>
-            <span class="likes">
-              <span class="icon">❤️</span>
-              {{ video.likeCount || 0 }}
-            </span>
-            <span class="content-type" [class.premium]="video.contentType === 'PREMIUM'">
-              <span class="icon">{{ video.contentType === 'PREMIUM' ? '⭐' : '🆓' }}</span>
-              {{ video.contentType === 'PREMIUM' ? 'Premium' : 'Gratis' }}
-            </span>
-          </div>
-
-          <!-- Hashtags -->
-          <div class="hashtags" *ngIf="video.hashtags">
-            <span class="hashtag" *ngFor="let tag of video.hashtags.split(',').slice(0, 3)">
-              {{ tag.trim() }}
-            </span>
-          </div>
-
-          <!-- External Links -->
-          <div class="external-links" *ngIf="hasExternalLinks(video)">
-            <div class="external-links-row">
-              <a *ngIf="video.spotifyLink" 
-                 [href]="video.spotifyLink" 
-                 target="_blank" 
-                 class="external-link spotify-link"
-                 (click)="$event.stopPropagation()"
-                 title="Luister op Spotify">
-                <svg viewBox="0 0 24 24" class="platform-logo">
-                  <path fill="currentColor" d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.636 14.636c-.244.243-.637.243-.881 0-.644-.645-1.469-1.117-2.388-1.364-.397-.106-.663-.444-.663-.856 0-.483.393-.875.875-.875.244 0 .469.1.631.262.644.644 1.481 1.031 2.425 1.031.994 0 1.856-.512 2.356-1.281.15-.231.394-.369.656-.369.481 0 .875.394.875.875 0 .206-.069.394-.206.531-.594.913-1.631 1.531-2.856 1.531-1.062 0-2.019-.331-2.824-.925z"/>
-                </svg>
-              </a>
-
-              <a *ngIf="video.amazonLink" 
-                 [href]="video.amazonLink" 
-                 target="_blank" 
-                 class="external-link amazon-link"
-                 (click)="$event.stopPropagation()"
-                 title="Luister op Amazon Music">
-                <svg viewBox="0 0 24 24" class="platform-logo">
-                  <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/>
-                </svg>
-              </a>
-
-              <a *ngIf="video.appleMusicLink" 
-                 [href]="video.appleMusicLink" 
-                 target="_blank" 
-                 class="external-link apple-link"
-                 (click)="$event.stopPropagation()"
-                 title="Luister op Apple Music">
-                <svg viewBox="0 0 24 24" class="platform-logo">
-                  <path fill="currentColor" d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
-                </svg>
-              </a>
-
-              <a *ngIf="video.itunesLink" 
-                 [href]="video.itunesLink" 
-                 target="_blank" 
-                 class="external-link itunes-link"
-                 (click)="$event.stopPropagation()"
-                 title="Koop op iTunes">
-                <svg viewBox="0 0 24 24" class="platform-logo">
-                  <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/>
-                </svg>
-              </a>
-
-              <a *ngIf="video.youtubeMusicLink" 
-                 [href]="video.youtubeMusicLink" 
-                 target="_blank" 
-                 class="external-link youtube-link"
-                 (click)="$event.stopPropagation()"
-                 title="Luister op YouTube Music">
-                <svg viewBox="0 0 24 24" class="platform-logo">
-                  <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5.64 6.8c-.15 1.58-.08 3.2-.564 4.64-.564 1.68-1.716 2.472-3.312 2.472-1.596 0-2.748-.792-3.312-2.472C9.68 12.2 9.752 10.58 9.6 9.2 9.448 7.82 9.68 6.24 10.444 4.96c.764-1.28 1.916-1.92 3.556-1.92s2.792.64 3.556 1.92c.764 1.28.996 2.86.844 4.24z"/>
-                </svg>
-              </a>
-
-              <a *ngIf="video.instagramLink" 
-                 [href]="video.instagramLink" 
-                 target="_blank" 
-                 class="external-link instagram-link"
-                 (click)="$event.stopPropagation()"
-                 title="Bekijk op Instagram">
-                <svg viewBox="0 0 24 24" class="platform-logo">
-                  <path fill="currentColor" d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
-                </svg>
-              </a>
-            </div>
-          </div>
-          
-          <!-- Action Buttons -->
-          <div class="video-actions" *ngIf="authService.isAuthenticated()">
-            <button 
-              class="action-btn like-btn" 
-              [class.liked]="video.isLiked"
-              (click)="$event.stopPropagation(); toggleLike(video)"
-              title="{{ video.isLiked ? 'Unlike this video' : 'Like this video' }}">
-              <span class="btn-text">{{ video.isLiked ? 'Liked' : 'Like' }}</span>
-              <span class="like-count" *ngIf="video.likeCount > 0">{{ video.likeCount }}</span>
-            </button>
             
-            <button 
-              class="action-btn favorite-btn" 
-              [class.favorited]="video.isFavorited"
-              (click)="$event.stopPropagation(); toggleFavorite(video)"
-              title="{{ video.isFavorited ? 'Remove from favorites' : 'Add to favorites' }}">
-              <span class="btn-text">{{ video.isFavorited ? 'Favorited' : 'Favorite' }}</span>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Favorite Videos Tab Content -->
-  <div class="video-section" *ngIf="activeTab === 'favorites'">
-    <div class="section-header">
-      <h2>⭐ Favoriete Video's</h2>
-      <p *ngIf="favoriteVideos.length === 0 && !loadingFavoriteVideos">Je hebt nog geen favoriete video's.</p>
-    </div>
-
-    <div class="loading" *ngIf="loadingFavoriteVideos">
-      <div class="spinner"></div>
-      <p>Favoriete video's laden...</p>
-    </div>    <div class="videos-grid" *ngIf="!loadingFavoriteVideos && favoriteVideos.length > 0">
-      <div class="video-card" *ngFor="let video of favoriteVideos" (click)="playVideo(video)">
-        <!-- Video Thumbnail with 9:16 Aspect Ratio -->
-        <div class="video-thumbnail">
-          <!-- Video Player (Hidden by default) -->          
-          <video 
-            #videoPlayer
-            *ngIf="playingVideoId === video.id && canWatchVideo(video)"
-            [src]="getVideoUrl(video.videoUrl)" 
-            class="video-player"
-            controls
-            autoplay
-            (click)="$event.stopPropagation()"
-            (play)="onVideoPlay(video)"
-            (ended)="stopVideo()">
-          </video>
-          
-          <!-- Cover Image -->
-          <img 
-            *ngIf="playingVideoId !== video.id"
-            [src]="getVideoThumbnail(video)" 
-            [alt]="video.title"
-            class="cover-image"
-            (error)="onImageError($event)">
-          
-          <!-- Play Button Overlay -->
-          <div *ngIf="playingVideoId !== video.id" class="play-overlay">
-            <div class="play-button">
-              <mat-icon>{{ canWatchVideo(video) ? 'play_arrow' : 'lock' }}</mat-icon>
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="stat-title">Gelikte Video's</span>
+                <mat-icon class="stat-icon">favorite</mat-icon>
+              </div>
+              <div class="stat-value">{{ likedVideos.length }}</div>
+              <div class="stat-change positive">
+                <mat-icon>add</mat-icon>
+                <span>+{{ likedVideos.length > 0 ? '1' : '0' }} deze week</span>
+              </div>
             </div>
-          </div>
-          
-          <!-- Premium Badge -->
-          <div *ngIf="video.contentType === 'PREMIUM'" class="premium-badge">
-            <mat-icon>star</mat-icon>
-            <span>Premium</span>
-          </div>
-        </div>
-
-        <!-- Video Info -->
-        <div class="video-info">
-          <h3 class="video-title">{{ video.title }}</h3>
-          <p class="video-description" *ngIf="video.description">{{ video.description }}</p>
-          
-          <div class="video-meta">
-            <span class="views">
-              <span class="icon">👁️</span>
-              {{ formatViews(video.viewCount || 0) }}
-            </span>
-            <span class="likes">
-              <span class="icon">❤️</span>
-              {{ video.likeCount || 0 }}
-            </span>
-            <span class="content-type" [class.premium]="video.contentType === 'PREMIUM'">
-              <span class="icon">{{ video.contentType === 'PREMIUM' ? '⭐' : '🆓' }}</span>
-              {{ video.contentType === 'PREMIUM' ? 'Premium' : 'Gratis' }}
-            </span>
-          </div>
-
-          <!-- Hashtags -->
-          <div class="hashtags" *ngIf="video.hashtags">
-            <span class="hashtag" *ngFor="let tag of video.hashtags.split(',').slice(0, 3)">
-              {{ tag.trim() }}
-            </span>
-          </div>
-
-          <!-- External Links -->
-          <div class="external-links" *ngIf="hasExternalLinks(video)">
-            <div class="external-links-row">
-              <a *ngIf="video.spotifyLink" 
-                 [href]="video.spotifyLink" 
-                 target="_blank" 
-                 class="external-link spotify-link"
-                 (click)="$event.stopPropagation()"
-                 title="Luister op Spotify">
-                <svg viewBox="0 0 24 24" class="platform-logo">
-                  <path fill="currentColor" d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.636 14.636c-.244.243-.637.243-.881 0-.644-.645-1.469-1.117-2.388-1.364-.397-.106-.663-.444-.663-.856 0-.483.393-.875.875-.875.244 0 .469.1.631.262.644.644 1.481 1.031 2.425 1.031.994 0 1.856-.512 2.356-1.281.15-.231.394-.369.656-.369.481 0 .875.394.875.875 0 .206-.069.394-.206.531-.594.913-1.631 1.531-2.856 1.531-1.062 0-2.019-.331-2.824-.925z"/>
-                </svg>
-              </a>
-
-              <a *ngIf="video.amazonLink" 
-                 [href]="video.amazonLink" 
-                 target="_blank" 
-                 class="external-link amazon-link"
-                 (click)="$event.stopPropagation()"
-                 title="Luister op Amazon Music">
-                <svg viewBox="0 0 24 24" class="platform-logo">
-                  <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/>
-                </svg>
-              </a>
-
-              <a *ngIf="video.appleMusicLink" 
-                 [href]="video.appleMusicLink" 
-                 target="_blank" 
-                 class="external-link apple-link"
-                 (click)="$event.stopPropagation()"
-                 title="Luister op Apple Music">
-                <svg viewBox="0 0 24 24" class="platform-logo">
-                  <path fill="currentColor" d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
-                </svg>
-              </a>
-
-              <a *ngIf="video.itunesLink" 
-                 [href]="video.itunesLink" 
-                 target="_blank" 
-                 class="external-link itunes-link"
-                 (click)="$event.stopPropagation()"
-                 title="Koop op iTunes">
-                <svg viewBox="0 0 24 24" class="platform-logo">
-                  <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/>
-                </svg>
-              </a>
-
-              <a *ngIf="video.youtubeMusicLink" 
-                 [href]="video.youtubeMusicLink" 
-                 target="_blank" 
-                 class="external-link youtube-link"
-                 (click)="$event.stopPropagation()"
-                 title="Luister op YouTube Music">
-                <svg viewBox="0 0 24 24" class="platform-logo">
-                  <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5.64 6.8c-.15 1.58-.08 3.2-.564 4.64-.564 1.68-1.716 2.472-3.312 2.472-1.596 0-2.748-.792-3.312-2.472C9.68 12.2 9.752 10.58 9.6 9.2 9.448 7.82 9.68 6.24 10.444 4.96c.764-1.28 1.916-1.92 3.556-1.92s2.792.64 3.556 1.92c.764 1.28.996 2.86.844 4.24z"/>
-                </svg>
-              </a>
-
-              <a *ngIf="video.instagramLink" 
-                 [href]="video.instagramLink" 
-                 target="_blank" 
-                 class="external-link instagram-link"
-                 (click)="$event.stopPropagation()"
-                 title="Bekijk op Instagram">
-                <svg viewBox="0 0 24 24" class="platform-logo">
-                  <path fill="currentColor" d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
-                </svg>
-              </a>
-            </div>
-          </div>
-          
-          <!-- Action Buttons -->
-          <div class="video-actions" *ngIf="authService.isAuthenticated()">
-            <button 
-              class="action-btn like-btn" 
-              [class.liked]="video.isLiked"
-              (click)="$event.stopPropagation(); toggleLike(video)"
-              title="{{ video.isLiked ? 'Unlike this video' : 'Like this video' }}">
-              <span class="btn-text">{{ video.isLiked ? 'Liked' : 'Like' }}</span>
-              <span class="like-count" *ngIf="video.likeCount > 0">{{ video.likeCount }}</span>
-            </button>
             
-            <button 
-              class="action-btn favorite-btn" 
-              [class.favorited]="video.isFavorited"
-              (click)="$event.stopPropagation(); toggleFavorite(video)"
-              title="{{ video.isFavorited ? 'Remove from favorites' : 'Add to favorites' }}">
-              <span class="btn-text">{{ video.isFavorited ? 'Favorited' : 'Favorite' }}</span>
-            </button>
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="stat-title">Favorieten</span>
+                <mat-icon class="stat-icon">star</mat-icon>
+              </div>
+              <div class="stat-value">{{ favoriteVideos.length }}</div>
+              <div class="stat-change positive">
+                <mat-icon>star</mat-icon>
+                <span>Top collectie</span>
+              </div>
+            </div>
+            
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="stat-title">Lid sinds</span>
+                <mat-icon class="stat-icon">calendar_today</mat-icon>
+              </div>
+              <div class="stat-value">{{ getDaysSinceJoined() }}</div>
+              <div class="stat-change positive">
+                <mat-icon>access_time</mat-icon>
+                <span>dagen</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Account Information -->
+          <div class="account-info">
+            <div class="info-grid">
+              <div class="info-card">
+                <h3 class="card-title">
+                  <mat-icon>person</mat-icon>
+                  Account Details
+                </h3>
+                <div class="info-item">
+                  <span class="item-label">Gebruikersnaam:</span>
+                  <span class="item-value">{{ user.username }}</span>
+                </div>
+                <div class="info-item">
+                  <span class="item-label">E-mail:</span>
+                  <span class="item-value email">{{ user.email }}</span>
+                </div>
+                <div class="info-item">
+                  <span class="item-label">Account Type:</span>
+                  <span class="item-value status" [class]="user.premium ? 'active' : 'inactive'">
+                    {{ user.premium ? 'Premium' : 'Standaard' }}
+                  </span>
+                </div>
+                <div class="info-item">
+                  <span class="item-label">Rol:</span>
+                  <span class="item-value">{{ user.roles.includes('ROLE_ADMIN') ? 'Administrator' : 'Gebruiker' }}</span>
+                </div>
+              </div>
+              
+              <div class="info-card">
+                <h3 class="card-title">
+                  <mat-icon>settings</mat-icon>
+                  Voorkeuren
+                </h3>
+                <div class="info-item">
+                  <span class="item-label">Thema:</span>
+                  <span class="item-value">Donker</span>
+                </div>
+                <div class="info-item">
+                  <span class="item-label">Taal:</span>
+                  <span class="item-value">Nederlands</span>
+                </div>
+                <div class="info-item">
+                  <span class="item-label">Notificaties:</span>
+                  <span class="item-value status active">Ingeschakeld</span>
+                </div>
+                <div class="info-item">
+                  <span class="item-label">Privacy:</span>
+                  <span class="item-value">Privé</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
-  </div>
-</div>
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon>favorite</mat-icon>
+          <span>Gelikte Video's</span>
+          <span class="tab-count">{{ likedVideos.length }}</span>
+        </ng-template>
+        <div class="tab-content">
+          <div class="videos-section" *ngIf="likedVideos.length > 0; else noLikedVideos">
+            <div class="videos-grid">              <div class="video-card" *ngFor="let video of likedVideos">
+                <div class="video-thumbnail" (click)="watchVideo(video.id)">
+                  <img [src]="video.coverImageUrl" [alt]="video.title" />
+                  <div class="video-overlay">
+                    <mat-icon class="play-btn">play_arrow</mat-icon>
+                  </div>
+                  <!-- <div class="video-duration">{{ formatDuration(video.duration) }}</div> -->
+                </div>
+                <div class="video-info">
+                  <h3 class="video-title">{{ video.title }}</h3>
+                  <p class="video-description">{{ video.description }}</p>
+                  <div class="video-meta">
+                    <span class="video-date">{{ video.createdAt | date:'dd MMM yyyy' }}</span>
+                    <button class="unlike-btn" (click)="unlikeVideo(video.id)">
+                      <mat-icon>favorite</mat-icon>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <ng-template #noLikedVideos>
+            <div class="empty-state">
+              <mat-icon>favorite_border</mat-icon>
+              <h3>Geen gelikte video's</h3>
+              <p>Je hebt nog geen video's geliket. Ga naar de videolijst om video's te liken!</p>
+            </div>
+          </ng-template>
+        </div>
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon>star</mat-icon>
+          <span>Favorieten</span>
+          <span class="tab-count">{{ favoriteVideos.length }}</span>
+        </ng-template>
+        <div class="tab-content">
+          <div class="videos-section" *ngIf="favoriteVideos.length > 0; else noFavoriteVideos">
+            <div class="videos-grid">              <div class="video-card" *ngFor="let video of favoriteVideos">
+                <div class="video-thumbnail" (click)="watchVideo(video.id)">
+                  <img [src]="video.coverImageUrl" [alt]="video.title" />
+                  <div class="video-overlay">
+                    <mat-icon class="play-btn">play_arrow</mat-icon>
+                  </div>
+                  <!-- <div class="video-duration">{{ formatDuration(video.duration) }}</div> -->
+                </div>
+                <div class="video-info">
+                  <h3 class="video-title">{{ video.title }}</h3>
+                  <p class="video-description">{{ video.description }}</p>
+                  <div class="video-meta">
+                    <span class="video-date">{{ video.createdAt | date:'dd MMM yyyy' }}</span>
+                    <button class="unfavorite-btn" (click)="removeFavorite(video.id)">
+                      <mat-icon>star</mat-icon>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <ng-template #noFavoriteVideos>
+            <div class="empty-state">
+              <mat-icon>star_border</mat-icon>
+              <h3>Geen favorieten</h3>
+              <p>Je hebt nog geen favoriete video's. Voeg video's toe aan je favorieten!</p>
+            </div>
+          </ng-template>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </div></div>
 
 <div class="loading" *ngIf="loading">
   <div class="spinner"></div>

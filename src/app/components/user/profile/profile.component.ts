@@ -4,30 +4,31 @@ import { Router, RouterModule } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatTabsModule } from '@angular/material/tabs';
 import { AuthService } from '../../../services/auth.service';
 import { VideoService, Video } from '../../../services/video.service';
 
 @Component({
   selector: 'app-profile',
-  standalone: true,
-  imports: [
+  standalone: true,  imports: [
     CommonModule, 
     RouterModule,
     MatCardModule,
     MatButtonModule,
-    MatIconModule
+    MatIconModule,
+    MatTabsModule
   ],
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss']
 })
-export class ProfileComponent implements OnInit {
-  user: any = null;
+export class ProfileComponent implements OnInit {  user: any = null;
   loading = true;
   likedVideos: Video[] = [];
   favoriteVideos: Video[] = [];
   loadingLikedVideos = true;
   loadingFavoriteVideos = true;
   activeTab = 'profile'; // 'profile', 'liked', 'favorites'
+  selectedTabIndex = 0; // For Material tabs
   playingVideoId: number | null = null;
   viewIncrementedVideos: Set<number> = new Set();
   constructor(
@@ -203,4 +204,46 @@ export class ProfileComponent implements OnInit {
     return !!(video.spotifyLink || video.amazonLink || video.appleMusicLink || 
               video.itunesLink || video.youtubeMusicLink || video.instagramLink);
   }
+
+  // New methods for the enhanced profile design
+  getDaysSinceJoined(): number {
+    if (!this.user?.createdAt) return 0;
+    const joinDate = new Date(this.user.createdAt);
+    const currentDate = new Date();
+    const timeDiff = currentDate.getTime() - joinDate.getTime();
+    return Math.floor(timeDiff / (1000 * 3600 * 24));
+  }
+
+  watchVideo(videoId: number): void {
+    this.router.navigate(['/video', videoId]);
+  }
+
+  unlikeVideo(videoId: number): void {
+    this.videoService.toggleLike(videoId).subscribe({
+      next: () => {
+        this.likedVideos = this.likedVideos.filter(v => v.id !== videoId);
+      },
+      error: (error) => {
+        console.error('Error unliking video:', error);
+      }
+    });
+  }
+
+  removeFavorite(videoId: number): void {
+    this.videoService.toggleFavorite(videoId).subscribe({
+      next: () => {
+        this.favoriteVideos = this.favoriteVideos.filter(v => v.id !== videoId);
+      },
+      error: (error) => {
+        console.error('Error removing favorite:', error);
+      }
+    });
+  }
+  formatDuration(duration?: number): string {
+    if (!duration) return '0:00';
+    const minutes = Math.floor(duration / 60);
+    const seconds = duration % 60;
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  }
+
 }
