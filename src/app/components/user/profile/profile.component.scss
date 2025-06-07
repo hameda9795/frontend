@@ -1,4 +1,5 @@
 // Profile Component - Enhanced Beautiful Modern Design
+@import '../../../../theme/theme.scss';
 
 .profile-container {
   min-height: 100vh;
@@ -393,10 +394,9 @@
     grid-template-columns: repeat(2, 1fr);
     gap: var(--space-lg);
   }
-  
-  // Desktop/Laptop: 4 videos per row
+    // Desktop/Laptop: 3 videos per row
   @media (min-width: 1024px) {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: var(--space-xl);
   }
     .video-card {
@@ -881,103 +881,111 @@
             }
           }
         }
-      }
-      
-      .video-actions {
+      }      .video-actions {
         display: flex;
-        gap: var(--space-sm);
+        gap: 10px; /* Consistent gap for better touch accessibility */
         margin-top: var(--space-md);
         padding-top: var(--space-md);
-        border-top: 1px solid rgba(148, 163, 184, 0.1);
+        border-top: 1px solid rgba(148, 163, 184, 0.15); /* More visible separator */
+        align-items: stretch; /* Stretch buttons to same height */
+        justify-content: space-between; /* Distribute buttons evenly */
         
-        .action-btn {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: var(--space-xs);
-          padding: var(--space-xs) var(--space-sm);
-          border: 1px solid rgba(148, 163, 184, 0.2);
-          border-radius: var(--radius-lg);
+        @media (max-width: 480px) {
+          flex-wrap: wrap; /* Allow buttons to wrap on small screens */
+          justify-content: center; /* Center the buttons on small screens */
+        }          .action-btn {
+          @include action-button-responsive;
+          border: 1px solid rgba(148, 163, 184, 0.3);
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+          position: relative;
+          flex: 1;
           background: var(--bg-card);
           color: var(--text-secondary);
-          cursor: pointer;
-          transition: all var(--transition-normal);
-          font-size: var(--font-size-xs);
-          font-weight: 500;
-          flex: 1;
           
-          @media (min-width: 768px) {
-            padding: var(--space-sm) var(--space-md);
-            font-size: var(--font-size-sm);
-            gap: var(--space-sm);
-          }
-          
-          .btn-text {
-            display: none;
-            
-            @media (min-width: 480px) {
-              display: inline;
-            }
+          .btn-icon {
+            color: var(--text-primary);
           }
           
           &:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
           }
           
           &.like-btn {
             &:hover {
               border-color: rgba(239, 68, 68, 0.4);
-              background: rgba(239, 68, 68, 0.1);
-              color: #ef4444;
-            }
-            
-            &.liked {
-              background: rgba(239, 68, 68, 0.1);
-              border-color: rgba(239, 68, 68, 0.3);
+              background: rgba(239, 68, 68, 0.15); /* Darker background for better contrast */
               color: #ef4444;
               
-              &:hover {
-                background: rgba(239, 68, 68, 0.15);
-                transform: translateY(-2px) scale(1.02);
+              .btn-icon {
+                color: #ef4444;
               }
             }
-            
-            .like-count {
-              background: rgba(239, 68, 68, 0.2);
+              &.liked {
+              background: rgba(239, 68, 68, 0.25); /* Darker background for better contrast */
+              border-color: rgba(239, 68, 68, 0.6);
               color: #ef4444;
-              padding: 2px 6px;
-              border-radius: var(--radius-sm);
-              font-size: var(--font-size-xs);
-              min-width: 18px;
-              text-align: center;
+              box-shadow: 0 2px 6px rgba(239, 68, 68, 0.25);
+              
+              .btn-icon {
+                color: #ef4444; /* Make icon color match the active state */
+                animation: pulse 1s ease-in-out;
+              }
+              
+              &:hover {
+                background: rgba(239, 68, 68, 0.3);
+                transform: translateY(-2px) scale(1.02);
+                box-shadow: 0 4px 8px rgba(239, 68, 68, 0.3);
+              }
+              
+              @media (max-width: 360px) {
+                border-width: 2px;
+              }
             }
-          }
-          
-          &.favorite-btn {
+          }            &.favorite-btn {
             &:hover {
               border-color: rgba(245, 158, 11, 0.4);
-              background: rgba(245, 158, 11, 0.1);
-              color: #f59e0b;
-            }
-            
-            &.favorited {
-              background: rgba(245, 158, 11, 0.1);
-              border-color: rgba(245, 158, 11, 0.3);
+              background: rgba(245, 158, 11, 0.15); /* Darker background for better contrast */
               color: #f59e0b;
               
+              .btn-icon {
+                color: #f59e0b;
+              }
+            }            &.favorited {
+              background: rgba(245, 158, 11, 0.25); /* Darker background for better contrast */
+              border-color: rgba(245, 158, 11, 0.6);
+              box-shadow: 0 2px 6px rgba(245, 158, 11, 0.25);
+              color: #f59e0b;
+              
+              .btn-icon {
+                color: #f59e0b; /* Make icon color match the active state */
+              }
+              
               &:hover {
-                background: rgba(245, 158, 11, 0.15);
-                transform: translateY(-2px) scale(1.02);
+                background: rgba(245, 158, 11, 0.25);
+                transform: translateY(-1px) scale(1.01);
               }
             }
           }
-          
-          &.remove-btn {
+            &.remove-btn, &.unlike-btn, &.unfavorite-btn {
             &:hover {
               border-color: rgba(239, 68, 68, 0.4);
-              background: rgba(239, 68, 68, 0.1);
+              background: rgba(239, 68, 68, 0.15); /* Darker background for better contrast */
               color: #ef4444;
+            }
+            
+            .btn-icon {
+              color: #64748b; /* Neutral icon color for better visibility */
+            }
+            
+            &:hover .btn-icon {
+              color: #ef4444;
+            }
+            
+            @media (max-width: 360px) {
+              .btn-icon {
+                font-size: 22px; /* Larger icon for better visibility on very small screens */
+              }
             }
           }
         }
@@ -1112,5 +1120,27 @@
   
   .stats-cards {
     grid-template-columns: 1fr;
+  }
+}
+
+/* Extra small devices - improved responsive design for small screens */
+@media (max-width: 360px) {
+  .video-actions {
+    gap: 8px; /* Consistent gap for better spacing */
+    flex-wrap: wrap; /* Allow wrapping on extra small screens */
+    justify-content: center; /* Center the buttons */
+  }
+}
+
+/* Animation for button active states */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
   }
 }

@@ -90,6 +90,9 @@
   font-weight: 600 !important;
   box-shadow: var(--shadow-md) !important;
   transition: all var(--transition-normal) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
   
   &:hover:not(:disabled) {
     transform: translateY(-2px) !important;
@@ -100,6 +103,122 @@
     opacity: 0.6 !important;
     cursor: not-allowed !important;
     transform: none !important;
+  }
+}
+
+/* Action Button Responsive Styling for App-Wide Consistency */
+@mixin action-button-responsive {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px; /* Consistent gap for better spacing between icon and text */
+  border-radius: var(--radius-lg);
+  transition: all var(--transition-normal);
+  cursor: pointer;
+  font-weight: 600;
+  text-align: center;
+  position: relative;
+  box-sizing: border-box;
+  min-height: 44px; /* Standard minimum touch target size */
+  min-width: 44px; /* Minimum width for good touch targets */
+  outline: none;
+  overflow: hidden; /* Prevent content overflow */
+  text-decoration: none; /* Ensure no underlines */
+  vertical-align: middle; /* Better alignment */
+  
+  /* Text always displays with responsive sizing */
+  .btn-text, span {
+    display: inline-flex;
+    white-space: nowrap;
+    text-align: center;
+    margin: 0; /* Remove default margins that might interfere with centering */
+    padding: 0; /* Remove default padding */
+    line-height: 1.2; /* Improved line height for better vertical centering */
+    flex-grow: 0; /* Prevent text from growing */
+    align-items: center; /* Vertically center text content */
+    justify-content: center; /* Center text horizontally */
+  }
+  
+  /* Consistent icon styling */
+  .btn-icon, mat-icon, .icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin: 0;
+    line-height: 1;
+    vertical-align: middle; /* Better vertical alignment with text */
+  }
+  
+  /* Progressive responsive sizing with improved padding for all device sizes */
+  @media (max-width: 374px) {
+    padding: 8px 10px;
+    font-size: 12px;
+    .btn-text, span { 
+      font-size: 12px; 
+      font-weight: 600;
+    }
+    .btn-icon, mat-icon, .icon { 
+      font-size: 18px;
+      height: 18px;
+      width: 18px;
+    }
+  }
+  
+  @media (min-width: 375px) and (max-width: 480px) {
+    padding: 8px 12px;
+    font-size: 12px;
+    .btn-text, span { 
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .btn-icon, mat-icon, .icon { 
+      font-size: 18px;
+      height: 18px;
+      width: 18px;
+    }
+  }
+  
+  @media (min-width: 481px) and (max-width: 767px) {
+    padding: 10px 14px;
+    font-size: 13px;
+    .btn-text, span { 
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .btn-icon, mat-icon, .icon { 
+      font-size: 19px;
+      height: 19px;
+      width: 19px;
+    }
+  }
+  
+  @media (min-width: 768px) and (max-width: 1023px) {
+    padding: var(--space-sm) var(--space-md);
+    font-size: 14px;
+    .btn-text, span { 
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .btn-icon, mat-icon, .icon { 
+      font-size: 20px;
+      height: 20px;
+      width: 20px;
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    padding: var(--space-md) var(--space-lg);
+    font-size: var(--font-size-base);
+    .btn-text, span { 
+      font-size: var(--font-size-base);
+      font-weight: 600;
+    }
+    .btn-icon, mat-icon, .icon { 
+      font-size: 20px;
+      height: 20px;
+      width: 20px;
+    }
   }
 }
 

@@ -46,14 +46,11 @@
           [class.liked]="video.isLiked"
           (click)="toggleLike()">
           <span class="btn-text">Like</span>
-          <span class="count">({{ video.likeCount || 0 }})</span>
-        </button>
-          <button 
+        </button>          <button 
           class="btn btn-favorite" 
           [class.favorited]="video.isFavorited"
           (click)="toggleFavorite()">
           <span class="btn-text">Favorite</span>
-          <span class="count" *ngIf="video.favoriteCount">({{ video.favoriteCount }})</span>
         </button>
       </div>
 

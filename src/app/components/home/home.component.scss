@@ -1,4 +1,5 @@
 // Home Component - Enhanced Beautiful Modern Design with Comprehensive Responsiveness
+@import '../../../theme/theme.scss';
 
 .home-container {
   min-height: 100vh;
@@ -1006,72 +1007,37 @@
         &:hover {
           background: linear-gradient(45deg, #f69642, #e43f8a, #9148c2, #6366f1);
           box-shadow: 0 4px 12px rgba(221, 42, 123, 0.4);
-        }
-      }    }
-  }  // Video Action Buttons
+        }      }    }
+  }
+  
+  // Video Action Buttons
   .video-actions {
     display: flex;
-    gap: var(--space-sm);
+    gap: 10px; /* Consistent gap for better spacing */
     margin-top: var(--space-md);
     padding-top: var(--space-md);
     border-top: 1px solid rgba(148, 163, 184, 0.1);
+    justify-content: space-between; /* Distribute buttons evenly */
+    
+    @media (max-width: 480px) {
+      flex-wrap: wrap; /* Allow wrapping on small screens */
+      justify-content: center; /* Center on small screens */
+    }
     
     .action-btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: var(--space-xs);
+      @include action-button-responsive;
       border: 1px solid rgba(148, 163, 184, 0.2);
-      border-radius: var(--radius-lg);
       background: var(--bg-card);
       color: var(--text-secondary);
-      cursor: pointer;
-      transition: all var(--transition-normal);
-      font-weight: 500;
       flex: 1;
-      
-      // Extra small mobile: larger touch targets
-      @media (max-width: 480px) {
-        padding: var(--space-md) var(--space-sm);
-        font-size: var(--font-size-sm);
-        gap: var(--space-sm);
-        min-height: 44px; // iOS recommended touch target
-      }
-      
-      // Small mobile to tablet
-      @media (min-width: 481px) and (max-width: 1023px) {
-        padding: var(--space-sm) var(--space-md);
-        font-size: var(--font-size-sm);
-        gap: var(--space-sm);
-        min-height: 40px;
-      }
-      
-      // Desktop and up
-      @media (min-width: 1024px) {
-        padding: var(--space-md) var(--space-lg);
-        font-size: var(--font-size-base);
-        gap: var(--space-md);
-      }
-      
-      .btn-text {
-        transition: all var(--transition-normal);
-      }
-      
-      .like-count {
-        font-size: var(--font-size-xs);
-        background: rgba(148, 163, 184, 0.1);
-        padding: 2px 6px;
-        border-radius: var(--radius-sm);
-        margin-left: var(--space-xs);
-      }
+      min-width: 80px; /* Minimum width for touch targets */
       
       &:hover {
         transform: translateY(-2px);
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         border-color: rgba(148, 163, 184, 0.3);
       }
-      
-      &.like-btn {
+        &.like-btn {
         &:hover {
           background: rgba(239, 68, 68, 0.1);
           border-color: var(--error-color);
@@ -1079,46 +1045,42 @@
         }
         
         &.liked {
-          background: rgba(239, 68, 68, 0.1);
-          border-color: var(--error-color);
+          background: rgba(239, 68, 68, 0.25);
+          border-color: rgba(239, 68, 68, 0.6);
           color: var(--error-color);
+          box-shadow: 0 2px 6px rgba(239, 68, 68, 0.25);
           
           .btn-text {
             font-weight: 600;
           }
           
-          .like-count {
-            background: rgba(239, 68, 68, 0.2);
-            color: var(--error-color);
-          }
-          
           &:hover {
-            background: rgba(239, 68, 68, 0.2);
-            transform: translateY(-2px) scale(1.02);
+            background: rgba(239, 68, 68, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(239, 68, 68, 0.3);
           }
         }      }
-      
-      &.favorite-btn {
+        &.favorite-btn {
         &:hover {
-          background: rgba(255, 235, 59, 0.1);
-          border-color: #ffeb3b;
-          color: #f9a825;
+          background: rgba(245, 158, 11, 0.15);
+          border-color: rgba(245, 158, 11, 0.4);
+          color: #f59e0b;
         }
         
         &.favorited {
-          background: rgba(255, 235, 59, 0.15);
-          border-color: #ffeb3b;
-          color: #f9a825;
-          box-shadow: 0 2px 8px rgba(255, 235, 59, 0.3);
+          background: rgba(245, 158, 11, 0.25);
+          border-color: rgba(245, 158, 11, 0.6);
+          color: #f59e0b;
+          box-shadow: 0 2px 6px rgba(245, 158, 11, 0.25);
           
           .btn-text {
             font-weight: 600;
           }
           
           &:hover {
-            background: rgba(255, 235, 59, 0.25);
-            transform: translateY(-2px) scale(1.02);
-            box-shadow: 0 4px 12px rgba(255, 235, 59, 0.4);
+            background: rgba(245, 158, 11, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(245, 158, 11, 0.3);
           }
         }
       }
@@ -1228,5 +1190,19 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+/* Extra small devices - specific adjustments for the smallest screens */
+@media (max-width: 360px) {
+  .video-actions {
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+    
+    .action-btn {
+      flex-basis: auto;
+      min-width: 80px;
+    }
   }
 }
