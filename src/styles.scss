@@ -380,6 +380,43 @@ a {
   }
 }
 
+// Standardized Video Grid Layout - 4/2/1 Pattern
+.video-grid-standard {
+  display: grid;
+  gap: var(--space-lg);
+  grid-template-columns: 1fr; // Mobile: 1 video per row
+  
+  // Mobile: 1 video per row with smaller gap for extra small screens
+  @media (max-width: 767px) {
+    gap: var(--space-md);
+    grid-template-columns: 1fr;
+  }
+  
+  // Tablet portrait and landscape: 2 videos per row
+  @media (min-width: 768px) and (max-width: 1023px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-lg);
+  }
+  
+  // Tablet landscape orientation specific (to ensure 2 videos per row)
+  @media (min-width: 768px) and (max-width: 1023px) and (orientation: landscape) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-lg);
+  }
+  
+  // Tablet portrait orientation specific (to ensure 2 videos per row)
+  @media (min-width: 768px) and (max-width: 1023px) and (orientation: portrait) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-lg);
+  }
+  
+  // Desktop/Laptop: 4 videos per row
+  @media (min-width: 1024px) {
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-xl);
+  }
+}
+
 // Common Video Card Styles
 .video-card {
   background: var(--bg-card);

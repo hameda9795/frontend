@@ -369,15 +369,35 @@
   margin: 0 auto;
   padding: 1rem 0;
   
-  // Tablet: 2 videos per row
-  @media (min-width: 768px) {
+  // Mobile: 1 video per row with smaller gap for extra small screens
+  @media (max-width: 767px) {
+    gap: var(--space-md);
+    grid-template-columns: 1fr;
+  }
+  
+  // Tablet portrait and landscape: 2 videos per row
+  @media (min-width: 768px) and (max-width: 1023px) {
     grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-lg);
     max-width: none;
   }
   
-  // Desktop: 4 videos per row
+  // Tablet landscape orientation specific (to ensure 2 videos per row)
+  @media (min-width: 768px) and (max-width: 1023px) and (orientation: landscape) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-lg);
+  }
+  
+  // Tablet portrait orientation specific (to ensure 2 videos per row)
+  @media (min-width: 768px) and (max-width: 1023px) and (orientation: portrait) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-lg);
+  }
+  
+  // Desktop/Laptop: 4 videos per row
   @media (min-width: 1024px) {
     grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-xl);
   }
     .video-card {
     background: var(--bg-card);

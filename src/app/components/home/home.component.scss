@@ -442,47 +442,35 @@
   max-width: 100%;
   margin: 0 auto;
   
-  // Extra small mobile: smaller gap
-  @media (max-width: 480px) {
+  // Mobile: 1 video per row with smaller gap for extra small screens
+  @media (max-width: 767px) {
     gap: var(--space-md);
     grid-template-columns: 1fr;
   }
   
-  // Small tablet: 2 videos per row
-  @media (min-width: 600px) and (max-width: 767px) {
-    grid-template-columns: repeat(2, 1fr);
-    gap: var(--space-md);
-  }
-  
-  // Tablet: 2 videos per row with larger gap
+  // Tablet portrait and landscape: 2 videos per row
   @media (min-width: 768px) and (max-width: 1023px) {
     grid-template-columns: repeat(2, 1fr);
     gap: var(--space-lg);
     max-width: none;
   }
   
-  // Small desktop: 3 videos per row
-  @media (min-width: 1024px) and (max-width: 1199px) {
-    grid-template-columns: repeat(3, 1fr);
+  // Tablet landscape orientation specific (to ensure 2 videos per row)
+  @media (min-width: 768px) and (max-width: 1023px) and (orientation: landscape) {
+    grid-template-columns: repeat(2, 1fr);
     gap: var(--space-lg);
   }
   
-  // Desktop: 4 videos per row
-  @media (min-width: 1200px) and (max-width: 1599px) {
+  // Tablet portrait orientation specific (to ensure 2 videos per row)
+  @media (min-width: 768px) and (max-width: 1023px) and (orientation: portrait) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-lg);
+  }
+  
+  // Desktop/Laptop: 4 videos per row
+  @media (min-width: 1024px) {
     grid-template-columns: repeat(4, 1fr);
     gap: var(--space-xl);
-  }
-  
-  // Large desktop: 5 videos per row
-  @media (min-width: 1600px) and (max-width: 1919px) {
-    grid-template-columns: repeat(5, 1fr);
-    gap: var(--space-xl);
-  }
-  
-  // Ultra-wide: 6 videos per row
-  @media (min-width: 1920px) {
-    grid-template-columns: repeat(6, 1fr);
-    gap: var(--space-2xl);
   }
 }
 
