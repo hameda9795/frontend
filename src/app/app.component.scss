@@ -5,7 +5,7 @@
   background: var(--bg-primary);
 }
 
-// Modern Navbar Styling
+// Modern Navbar Styling with Enhanced Mobile Responsiveness
 .navbar {
   background: var(--bg-secondary);
   backdrop-filter: blur(20px);
@@ -20,7 +20,21 @@
   justify-content: space-between;
   height: 70px;
   
+  // Extra small mobile
+  @media (max-width: 480px) {
+    padding: 0 var(--space-sm);
+    height: 60px;
+  }
+  
+  // Small mobile to tablet
+  @media (min-width: 481px) and (max-width: 767px) {
+    padding: 0 var(--space-md);
+    height: 65px;
+  }
+  
   .nav-brand {
+    flex-shrink: 0; // Prevent brand from shrinking
+    
     .brand-link {
       text-decoration: none;
       
@@ -31,9 +45,23 @@
         -webkit-text-fill-color: transparent;
         font-family: var(--font-family-heading);
         font-weight: 700;
-        font-size: var(--font-size-2xl);
         margin: 0;
         transition: all var(--transition-normal);
+        
+        // Extra small mobile
+        @media (max-width: 480px) {
+          font-size: var(--font-size-lg);
+        }
+        
+        // Small mobile
+        @media (min-width: 481px) and (max-width: 767px) {
+          font-size: var(--font-size-xl);
+        }
+        
+        // Tablet and up
+        @media (min-width: 768px) {
+          font-size: var(--font-size-2xl);
+        }
         
         &:hover {
           transform: scale(1.05);
@@ -47,14 +75,56 @@
     align-items: center;
     gap: var(--space-lg);
     
+    // Extra small mobile: very compact
+    @media (max-width: 480px) {
+      gap: var(--space-xs);
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      
+      // Hide scrollbar
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      &::-webkit-scrollbar {
+        display: none;
+      }
+    }
+    
+    // Small mobile: compact
+    @media (min-width: 481px) and (max-width: 767px) {
+      gap: var(--space-sm);
+    }
+    
     a {
       color: var(--text-secondary);
       text-decoration: none;
       font-weight: 500;
-      padding: var(--space-sm) var(--space-md);
       border-radius: var(--radius-md);
       transition: all var(--transition-fast);
       position: relative;
+      white-space: nowrap; // Prevent text wrapping
+      
+      // Extra small mobile: minimal padding
+      @media (max-width: 480px) {
+        padding: var(--space-xs);
+        font-size: var(--font-size-xs);
+        min-width: 44px; // iOS touch target
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      
+      // Small mobile: small padding
+      @media (min-width: 481px) and (max-width: 767px) {
+        padding: var(--space-xs) var(--space-sm);
+        font-size: var(--font-size-sm);
+      }
+      
+      // Tablet and up: normal padding
+      @media (min-width: 768px) {
+        padding: var(--space-sm) var(--space-md);
+        font-size: var(--font-size-base);
+      }
       
       &:hover {
         color: var(--text-primary);
@@ -83,34 +153,35 @@
       background: transparent;
       color: var(--error-color);
       border: 1px solid var(--error-color);
-      padding: var(--space-xs) var(--space-md);
       border-radius: var(--radius-md);
       font-weight: 500;
       cursor: pointer;
       transition: all var(--transition-fast);
+      white-space: nowrap;
+      
+      // Extra small mobile: minimal padding
+      @media (max-width: 480px) {
+        padding: var(--space-xs);
+        font-size: var(--font-size-xs);
+        min-width: 44px;
+      }
+      
+      // Small mobile: small padding
+      @media (min-width: 481px) and (max-width: 767px) {
+        padding: var(--space-xs) var(--space-sm);
+        font-size: var(--font-size-sm);
+      }
+      
+      // Tablet and up: normal padding
+      @media (min-width: 768px) {
+        padding: var(--space-xs) var(--space-md);
+        font-size: var(--font-size-base);
+      }
       
       &:hover {
         background: var(--error-color);
         color: white;
         transform: translateY(-1px);
-      }
-    }
-  }
-  
-  // Mobile responsive
-  @media (max-width: 768px) {
-    padding: 0 var(--space-md);
-    
-    .nav-brand h1 {
-      font-size: var(--font-size-xl);
-    }
-    
-    .nav-links {
-      gap: var(--space-sm);
-      
-      a {
-        padding: var(--space-xs) var(--space-sm);
-        font-size: var(--font-size-sm);
       }
     }
   }
@@ -124,12 +195,28 @@
   margin: 0 auto;
   width: 100%;
   
-  @media (max-width: 768px) {
+  // Extra small mobile: minimal padding
+  @media (max-width: 480px) {
+    padding: var(--space-md) var(--space-sm);
+  }
+  
+  // Small mobile to tablet
+  @media (min-width: 481px) and (max-width: 768px) {
     padding: var(--space-lg) var(--space-md);
+  }
+  
+  // Tablet
+  @media (min-width: 769px) and (max-width: 1023px) {
+    padding: var(--space-xl) var(--space-lg);
+  }
+  
+  // Desktop and up: generous padding
+  @media (min-width: 1024px) {
+    padding: var(--space-2xl) var(--space-xl);
   }
 }
 
-// Modern Footer
+// Modern Footer with Enhanced Responsiveness
 .footer {
   background: var(--bg-secondary);
   border-top: 1px solid var(--border-color);
@@ -143,34 +230,110 @@
     align-items: center;
     justify-content: space-between;
     
+    // Extra small mobile: minimal padding and vertical layout
+    @media (max-width: 480px) {
+      padding: var(--space-md) var(--space-sm);
+      flex-direction: column;
+      gap: var(--space-sm);
+      text-align: center;
+    }
+    
+    // Small mobile to tablet: vertical layout with more space
+    @media (min-width: 481px) and (max-width: 768px) {
+      padding: var(--space-lg) var(--space-md);
+      flex-direction: column;
+      gap: var(--space-md);
+      text-align: center;
+    }
+    
+    // Tablet: horizontal layout returns
+    @media (min-width: 769px) and (max-width: 1023px) {
+      padding: var(--space-xl) var(--space-lg);
+      flex-direction: row;
+      justify-content: space-between;
+    }
+    
+    // Desktop and up: generous padding
+    @media (min-width: 1024px) {
+      padding: var(--space-2xl) var(--space-xl);
+    }
+    
     p {
       color: var(--text-muted);
       margin: 0;
       font-size: var(--font-size-sm);
+      
+      // Extra small mobile: smaller text
+      @media (max-width: 480px) {
+        font-size: var(--font-size-xs);
+      }
+      
+      // Large screens: slightly larger text
+      @media (min-width: 1024px) {
+        font-size: var(--font-size-base);
+      }
     }
     
     .footer-links {
       display: flex;
       gap: var(--space-lg);
       
+      // Extra small mobile: smaller gaps and vertical stacking for better touch targets
+      @media (max-width: 480px) {
+        gap: var(--space-sm);
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      
+      // Small mobile: compact horizontal layout
+      @media (min-width: 481px) and (max-width: 768px) {
+        gap: var(--space-md);
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      
+      // Tablet and up: normal spacing
+      @media (min-width: 769px) {
+        gap: var(--space-lg);
+        flex-wrap: nowrap;
+      }
+      
       a {
         color: var(--text-muted);
         font-size: var(--font-size-sm);
         transition: color var(--transition-fast);
+        text-decoration: none;
+        padding: var(--space-xs) var(--space-sm);
+        border-radius: var(--radius-sm);
+        
+        // Extra small mobile: larger touch targets and smaller text
+        @media (max-width: 480px) {
+          font-size: var(--font-size-xs);
+          padding: var(--space-sm) var(--space-md);
+          min-height: 44px; // iOS touch target standard
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        
+        // Small mobile: better touch targets
+        @media (min-width: 481px) and (max-width: 768px) {
+          padding: var(--space-xs) var(--space-md);
+          min-height: 40px;
+          display: flex;
+          align-items: center;
+        }
+        
+        // Large screens: slightly larger text
+        @media (min-width: 1024px) {
+          font-size: var(--font-size-base);
+        }
         
         &:hover {
           color: var(--text-primary);
+          background: var(--bg-tertiary);
+          transform: translateY(-1px);
         }
-      }
-    }
-    
-    @media (max-width: 768px) {
-      flex-direction: column;
-      gap: var(--space-md);
-      text-align: center;
-      
-      .footer-links {
-        gap: var(--space-md);
       }
     }
   }
