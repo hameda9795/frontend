@@ -174,22 +174,20 @@
                 </svg>              </a>
             </div>
           </div>          <!-- Action Buttons -->
-          <div class="video-actions" *ngIf="authService.isAuthenticated()">
-            <button 
+          <div class="video-actions" *ngIf="authService.isAuthenticated()">            <button 
               class="action-btn like-btn" 
               [class.liked]="video.isLiked"
               (click)="$event.stopPropagation(); toggleLike(video)"
               title="{{ video.isLiked ? 'Unlike this video' : 'Like this video' }}">
-              <span class="btn-text">{{ video.isLiked ? 'Liked' : 'Like' }}</span>
+              <span class="btn-text">Like</span>
               <span class="like-count" *ngIf="video.likeCount > 0">{{ video.likeCount }}</span>
             </button>
-            
-            <button 
+              <button 
               class="action-btn favorite-btn" 
               [class.favorited]="video.isFavorited"
               (click)="$event.stopPropagation(); toggleFavorite(video)"
               title="{{ video.isFavorited ? 'Remove from favorites' : 'Add to favorites' }}">
-              <span class="btn-text">{{ video.isFavorited ? 'Favorited' : 'Favorite' }}</span>
+              <span class="btn-text">Favorite</span>
             </button>
           </div>
         </div>
